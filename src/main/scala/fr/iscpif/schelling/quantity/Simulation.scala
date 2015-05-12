@@ -31,7 +31,7 @@ object Simulation extends App {
     (state, step) <- simulation.states.take(100).zipWithIndex
   } {
     def unsatisfied = simulation.unsatisfieds(state).map(_.number).sum
-       println(s"Step $step: Number of unsatisfied: $unsatisfied, dissimilarity index D: ${dissimilarity(state.matrix, Green, Red)}, entropy index H: ${entropy(state.matrix, Green, Red)}, Exposure of Reds to Greens :${exposureOfColor1ToColor2(state.matrix, Red, Green)},Isolation index of Reds :${isolation(state.matrix, Red, Green)}")
+    println(s"Step $step: Number of unsatisfied: $unsatisfied, dissimilarity index D: ${"%.3f".format(dissimilarity(state.matrix, Green, Red))}, entropy index H: ${"%.3f".format(entropy(state.matrix, Green, Red))}, Exposure of Reds to Greens :${"%.3f".format(exposureOfColor1ToColor2(state.matrix, Red, Green))}, Isolation index of Reds :${"%.3f".format(isolation(state.matrix, Red, Green))}")
 
     for { ((i, j), c) <- state.cells }
       output.append(s"""$i,$j,${c.capacity},${Color.all.map(_.cellColor.get(c)).mkString(",")}\n""")

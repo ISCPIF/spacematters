@@ -81,14 +81,10 @@ package object metric {
     }.sum
   }
 
-
-
-
-def exposureOfColor1ToColor2(cells: Seq[Seq[Cell]], color1: Color, color2: Color): Double = {
+  def exposureOfColor1ToColor2(cells: Seq[Seq[Cell]], color1: Color, color2: Color): Double = {
     val flatCells = cells.flatten
-    val totalPopulation = Seq(color1, color2).map{ color => color -> total(color, flatCells) }.toMap
+    val totalPopulation = Seq(color1, color2).map { color => color -> total(color, flatCells) }.toMap
     val totalPopColor1 = totalPopulation(color1).toDouble
-
 
     flatCells.map {
       cell =>
@@ -97,20 +93,18 @@ def exposureOfColor1ToColor2(cells: Seq[Seq[Cell]], color1: Color, color2: Color
         val cellPop = nbColor1.toDouble + nbColor2.toDouble
 
         val cellPropColor2 =
-           if(cellPop.toDouble == 0) 0
-           else nbColor2.toDouble / cellPop.toDouble
+          if (cellPop.toDouble == 0) 0
+          else nbColor2.toDouble / cellPop.toDouble
 
         (nbColor1.toDouble / totalPopColor1.toDouble) * cellPropColor2.toDouble
 
     }.sum
   }
 
-
-def isolation(cells: Seq[Seq[Cell]], color1: Color, color2: Color): Double = {
+  def isolation(cells: Seq[Seq[Cell]], color1: Color, color2: Color): Double = {
     val flatCells = cells.flatten
-    val totalPopulation = Seq(color1, color2).map{ color => color -> total(color, flatCells) }.toMap
+    val totalPopulation = Seq(color1, color2).map { color => color -> total(color, flatCells) }.toMap
     val totalPopColor1 = totalPopulation(color1).toDouble
-
 
     flatCells.map {
       cell =>
@@ -119,8 +113,8 @@ def isolation(cells: Seq[Seq[Cell]], color1: Color, color2: Color): Double = {
         val cellPop = nbColor1.toDouble + nbColor2.toDouble
 
         val cellPropColor1 =
-           if(cellPop.toDouble == 0) 0
-           else nbColor1.toDouble / cellPop.toDouble
+          if (cellPop.toDouble == 0) 0
+          else nbColor1.toDouble / cellPop.toDouble
 
         (nbColor1.toDouble / totalPopColor1.toDouble) * cellPropColor1.toDouble
 
