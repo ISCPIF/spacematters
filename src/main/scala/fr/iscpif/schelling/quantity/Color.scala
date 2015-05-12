@@ -33,4 +33,3 @@ case object Green extends Color {
   def cellColor = GenLens[Cell](_.green)
 }
 
-

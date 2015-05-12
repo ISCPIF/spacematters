@@ -16,11 +16,10 @@
  */
 package fr.iscpif.schelling.quantity
 
-
 case class State(matrix: Seq[Seq[Cell]]) {
   def side = matrix.size
   def apply(i: Int)(j: Int) =
-    if(i < 0 || j < 0 || i >= side || j >= side) Cell.empty
+    if (i < 0 || j < 0 || i >= side || j >= side) Cell.empty
     else matrix(i)(j)
 
   def cells = matrix.flatZipWithIndex

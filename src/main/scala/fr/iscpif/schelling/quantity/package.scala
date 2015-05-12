@@ -20,7 +20,7 @@ import scala.util.Random
 
 package object quantity {
 
-  implicit class SeqDecorator[T] (s: Seq[T]) {
+  implicit class SeqDecorator[T](s: Seq[T]) {
     def random(implicit rng: Random) = s((s.size * rng.nextDouble).toInt)
   }
 

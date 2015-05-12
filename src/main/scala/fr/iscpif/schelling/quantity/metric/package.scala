@@ -28,7 +28,7 @@ package object metric {
 
   def dissimilarity(cells: Seq[Seq[Cell]], color1: Color, color2: Color): Double = {
     val flatCells = cells.flatten
-    val totalPopulation = Seq(color1, color2).map{ color => color -> total(color, flatCells) }.toMap
+    val totalPopulation = Seq(color1, color2).map { color => color -> total(color, flatCells) }.toMap
 
     flatCells.map {
       cell =>
@@ -38,19 +38,19 @@ package object metric {
     }.sum
   }
 
-def entropy(cells: Seq[Seq[Cell]], color1: Color, color2: Color): Double = {
+  def entropy(cells: Seq[Seq[Cell]], color1: Color, color2: Color): Double = {
     val flatCells = cells.flatten
-    val totalPopulation = Seq(color1, color2).map{ color => color -> total(color, flatCells) }.toMap
-    val totalPropColor1 = totalPopulation(color1).toDouble / (totalPopulation(color1).toDouble+totalPopulation(color2).toDouble)
-    val totalPropColor2 = totalPopulation(color2).toDouble / (totalPopulation(color1).toDouble+totalPopulation(color2).toDouble)
+    val totalPopulation = Seq(color1, color2).map { color => color -> total(color, flatCells) }.toMap
+    val totalPropColor1 = totalPopulation(color1).toDouble / (totalPopulation(color1).toDouble + totalPopulation(color2).toDouble)
+    val totalPropColor2 = totalPopulation(color2).toDouble / (totalPopulation(color1).toDouble + totalPopulation(color2).toDouble)
 
     val logInversePropColor1 =
-              if(totalPropColor1.toDouble == 0) 0
-              else math.log(1/totalPropColor1.toDouble)
+      if (totalPropColor1.toDouble == 0) 0
+      else math.log(1 / totalPropColor1.toDouble)
 
     val logInversePropColor2 =
-                  if(totalPropColor2.toDouble == 0) 0
-                  else math.log(1/totalPropColor2.toDouble)
+      if (totalPropColor2.toDouble == 0) 0
+      else math.log(1 / totalPropColor2.toDouble)
 
     val cityEntropy = (totalPropColor1.toDouble * logInversePropColor1.toDouble) + (totalPropColor2.toDouble * logInversePropColor2.toDouble)
 
@@ -61,23 +61,22 @@ def entropy(cells: Seq[Seq[Cell]], color1: Color, color2: Color): Double = {
         val cellPop = nbColor1.toDouble + nbColor2.toDouble
 
         val cellPropColor1 =
-            if(cellPop.toDouble == 0) 0
-            else nbColor1.toDouble / cellPop.toDouble
+          if (cellPop.toDouble == 0) 0
+          else nbColor1.toDouble / cellPop.toDouble
         val cellPropColor2 =
-            if(cellPop.toDouble == 0) 0
-            else nbColor2.toDouble / cellPop.toDouble
+          if (cellPop.toDouble == 0) 0
+          else nbColor2.toDouble / cellPop.toDouble
 
         val logInverseCellPropColor1 =
-              if(cellPropColor1.toDouble == 0) 0
-              else math.log(1/cellPropColor1.toDouble)
+          if (cellPropColor1.toDouble == 0) 0
+          else math.log(1 / cellPropColor1.toDouble)
         val logInverseCellPropColor2 =
-              if(cellPropColor2.toDouble == 0) 0
-              else math.log(1/cellPropColor2.toDouble)
+          if (cellPropColor2.toDouble == 0) 0
+          else math.log(1 / cellPropColor2.toDouble)
 
         val cellEntropy = (cellPropColor1.toDouble * logInverseCellPropColor1.toDouble) + (cellPropColor2.toDouble * logInverseCellPropColor2.toDouble)
 
-
-        (cellPop.toDouble * (cityEntropy.toDouble - cellEntropy.toDouble)) / ( cityEntropy.toDouble * (totalPopulation(color1).toDouble + totalPopulation(color2).toDouble) )
+        (cellPop.toDouble * (cityEntropy.toDouble - cellEntropy.toDouble)) / (cityEntropy.toDouble * (totalPopulation(color1).toDouble + totalPopulation(color2).toDouble))
 
     }.sum
   }

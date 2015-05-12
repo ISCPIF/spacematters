@@ -1,6 +1,6 @@
 organization := "fr.iscpif"
 
-name := "schelling-quantity"
+name := "spacematters"
 
 version := "1.0"
 
@@ -13,3 +13,8 @@ libraryDependencies ++= Seq(
   "com.github.julien-truffaut"  %%  "monocle-generic" % monocleVersion,
   "com.github.julien-truffaut"  %%  "monocle-macro"   % monocleVersion
 )
+
+libraryDependencies += "com.github.scala-incubator.io" %% "scala-io-core" % "0.4.3-1"
+
+scalariformSettings
+
