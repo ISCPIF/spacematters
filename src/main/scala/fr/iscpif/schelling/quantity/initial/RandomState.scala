@@ -41,11 +41,11 @@ trait RandomState <: InitialState { self: Schelling =>
     val builder = cells.map(_.toBuffer).toBuffer
 
     def fill(reservoir: Cell): Unit =
-      if(!reservoir.isEmpty) {
-        def color = if(rng.nextDouble() < reservoir.green.toDouble / reservoir.population) Green else Red
+      if (!reservoir.isEmpty) {
+        def color = if (rng.nextDouble() < reservoir.green.toDouble / reservoir.population) Green else Red
         val i = (rng.nextDouble() * cells.size).toInt
         val j = (rng.nextDouble() * cells.size).toInt
-        if(!builder(i)(j).isFull) {
+        if (!builder(i)(j).isFull) {
           builder(i)(j) = color.cellColor.modify(_ + 1)(builder(i)(j))
           fill(color.cellColor.modify(_ - 1)(reservoir))
         } else fill(reservoir)

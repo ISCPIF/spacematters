@@ -10,7 +10,6 @@ object Simulation extends App {
 
   implicit val rng = new Random
 
-
   val simulation = new Schelling with RandomState with RandomMoves {
     override def size: Int = 100
     override def greenRatio: Double = 0.5
@@ -23,7 +22,7 @@ object Simulation extends App {
     (state, step) <- simulation.states.take(100).zipWithIndex
   } {
     def unsatisfied = simulation.unsatisfieds(state).map(_.number).sum
-       println(s"Step $step: Number of unsatisfied: $unsatisfied, dissimilarity index D: ${dissimilarity(state.matrix, Green, Red)}, entropy index H: ${entropy(state.matrix, Green, Red)}")
-     }
+    println(s"Step $step: Number of unsatisfied: $unsatisfied, dissimilarity index D: ${dissimilarity(state.matrix, Green, Red)}, entropy index H: ${entropy(state.matrix, Green, Red)}")
+  }
 
 }

@@ -18,9 +18,7 @@ package fr.iscpif.schelling.quantity.move
 
 import fr.iscpif.schelling.quantity._
 
-
 case class Unsatisfied(position: Position, color: Color, number: Int)
-
 
 trait Unsatisfieds <: Neighborhood {
 
@@ -33,7 +31,7 @@ trait Unsatisfieds <: Neighborhood {
       population = neighbourCells.map(_.population).sum
       color <- Color.all
       colorPopulation = neighbourCells.map(color.cellColor.get).sum
-      if(colorPopulation.toDouble / population < similarWanted)
+      if (colorPopulation.toDouble / population < similarWanted)
     } yield Unsatisfied(position, color, color.cellColor.get(c))
   }
 }

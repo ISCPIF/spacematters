@@ -23,7 +23,7 @@ import scala.util.Random
 case class Move(color: Color, origin: Position, destination: Position)
 
 trait Moves <: Unsatisfieds {
-  def moves(state: State)(implicit rng: Random): Seq[Move] =  {
+  def moves(state: State)(implicit rng: Random): Seq[Move] = {
     for {
       unsatisfied <- unsatisfieds(state)
       i <- 0 until unsatisfied.number
@@ -33,10 +33,9 @@ trait Moves <: Unsatisfieds {
   def destination(state: State, unsatisfied: Unsatisfied)(implicit rng: Random): Position
 }
 
+trait RandomMoves <: Moves {
 
-trait RandomMoves <: Moves  {
-
-  def destination (state: State, unsatisfied: Unsatisfied)(implicit rng: Random) = {
+  def destination(state: State, unsatisfied: Unsatisfied)(implicit rng: Random) = {
     val x = rng.nextInt(state.side)
     val y = rng.nextInt(state.side)
     (x, y)
