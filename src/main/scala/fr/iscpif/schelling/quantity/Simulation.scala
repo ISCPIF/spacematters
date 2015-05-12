@@ -15,11 +15,11 @@ object Simulation extends App {
   implicit val rng = new Random
 
   val simulation = new Schelling with RandomState with RandomMoves {
-    override def size: Int = 3
-    override def greenRatio: Double = 0.65
-    override def redRatio: Double = 0.30
-    override def maxCapacity: Int = 10
-    override def similarWanted: Double = 0.3
+    override def size: Int = 50
+    override def greenRatio: Double = 0.5
+    override def redRatio: Double = 0.35
+    override def maxCapacity: Int = 50
+    override def similarWanted: Double = 0.4
   }
 
   val file = new File("/tmp/result.csv")
