@@ -15,7 +15,7 @@ object Simulation extends App {
   implicit val rng = new Random
 
   val simulation = new Schelling with RandomState with RandomMoves {
-    override def size: Int = 100
+    override def size: Int = 3
     override def greenRatio: Double = 0.65
     override def redRatio: Double = 0.30
     override def maxCapacity: Int = 10
@@ -34,7 +34,7 @@ object Simulation extends App {
     println(s"Step $step: # of unsatisfied: $unsatisfied, Dissimilarity D: ${"%.3f".format(dissimilarity(state.matrix, Green, Red))}, Entropy H: ${"%.3f".format(entropy(state.matrix, Green, Red))}, Exposure Reds to Greens :${"%.3f".format(exposureOfColor1ToColor2(state.matrix, Red, Green))}, Isolation Reds :${"%.3f".format(isolation(state.matrix, Red, Green))}, Concentration Greens : ${"%.3f".format(delta(state.matrix, Green, Red))}")
 
     for { ((i, j), c) <- state.cells }
-      output.append(s"""$i,$j,${c.capacity},${Color.all.map(_.cellColor.get(c)).mkString(",")}\n""")
+      output.append(s"""$step,$i,$j,${c.capacity},${Color.all.map(_.cellColor.get(c)).mkString(",")}\n""")
 
   }
 
