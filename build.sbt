@@ -14,6 +14,7 @@ libraryDependencies ++= Seq(
   "com.github.julien-truffaut"  %%  "monocle-macro"   % monocleVersion
 )
 
+libraryDependencies += "com.github.scala-incubator.io" %% "scala-io-core" % "0.4.3-1"
 
 scalariformSettings
 

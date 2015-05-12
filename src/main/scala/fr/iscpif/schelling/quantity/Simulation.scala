@@ -1,8 +1,12 @@
 package fr.iscpif.schelling.quantity
 
+import java.io.File
+
 import initial._
 import move._
 import metric._
+
+import scalax.io.Resource
 
 import scala.util.Random
 
@@ -18,11 +22,20 @@ object Simulation extends App {
     override def similarWanted: Double = 0.5
   }
 
+  val file = new File("/tmp/result.csv")
+  file.delete()
+
+  val output = Resource.fromFile(file)
+
   for {
     (state, step) <- simulation.states.take(100).zipWithIndex
   } {
     def unsatisfied = simulation.unsatisfieds(state).map(_.number).sum
     println(s"Step $step: Number of unsatisfied: $unsatisfied, dissimilarity index D: ${dissimilarity(state.matrix, Green, Red)}, entropy index H: ${entropy(state.matrix, Green, Red)}")
+
+    for { ((i, j), c) <- state.cells }
+      output.append(s"""$i,$j,${c.capacity},${Color.all.map(_.cellColor.get(c)).mkString(",")}\n""")
+
   }
 
 }
