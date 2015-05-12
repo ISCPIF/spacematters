@@ -1,6 +1,8 @@
-import fr.iscpif.schelling.quantity.initial.RandomState
-import fr.iscpif.schelling.quantity.move.{RandomMoves, Unsatisfied}
-import fr.iscpif.schelling.quantity.{State, Schelling}
+package fr.iscpif.schelling.quantity
+
+import initial._
+import move._
+import metric._
 
 import scala.util.Random
 
@@ -21,7 +23,7 @@ object Simulation extends App {
     (state, step) <- simulation.states.take(100).zipWithIndex
   } {
     def unsatisfied = simulation.unsatisfieds(state).map(_.number).sum
-    println(s"Step $step: $unsatisfied unsatisfied")
+    println(s"Step $step: $unsatisfied unsatisfied, dissimilarity ${dissimilarity(state.matrix, Green, Red)}")
   }
 
 }
