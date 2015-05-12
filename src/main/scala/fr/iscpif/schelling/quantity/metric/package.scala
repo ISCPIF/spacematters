@@ -121,3 +121,18 @@ package object metric {
     }.sum
   }
 
+  def delta(cells: Seq[Seq[Cell]], color1: Color, color2: Color): Double = {
+    val flatCells = cells.flatten
+    val totalPopulation = Seq(color1, color2).map { color => color -> total(color, flatCells) }.toMap
+    val totalPopColor1 = totalPopulation(color1).toDouble
+    val NCells = flatCells.size
+
+    flatCells.map {
+      cell =>
+        val nbColor1 = color1.cellColor.get(cell)
+
+        abs((nbColor1.toDouble / totalPopColor1.toDouble) - (1 / NCells.toDouble))
+
+    }.sum * 0.5
+  }
+}
