@@ -34,8 +34,8 @@ package object metric {
       cell =>
         val nbColor1 = color1.cellColor.get(cell)
         val nbColor2 = color2.cellColor.get(cell)
-        0.5 * abs(nbColor1.toDouble / totalPopulation(color1) - nbColor2.toDouble / totalPopulation(color2))
-    }.sum
+        abs(nbColor1.toDouble / totalPopulation(color1) - nbColor2.toDouble / totalPopulation(color2))
+    }.sum * 0.5
   }
 
   def entropy(cells: Seq[Seq[Cell]], color1: Color, color2: Color): Double = {
@@ -121,4 +121,3 @@ package object metric {
     }.sum
   }
 
-}
