@@ -22,3 +22,5 @@ release/*
 *.bak
 .directory
 .DS_Store
+.Rhistory
+.RData
