@@ -20,7 +20,7 @@ shinyUI(fluidPage(
                    'Single Quote'="'"),
                  '"')
   ),
-   mainPanel("Visualizing the course of a simulation",
+   mainPanel(
 
               fluidRow(
                 
@@ -31,7 +31,8 @@ shinyUI(fluidPage(
                       selectInput("var", label = "Quantity to map",
                                   choices = c("Density" = "totalPop",
                                               "% Greens" = "pctgreens",
-                                              "% Reds" = "pctreds"
+                                              "% Reds" = "pctreds",
+                                              "% Unsatisfied"="pctunsatisfied"
                                               ), selected = "pctgreens"))
              ),
              plotOutput("map_cell")
