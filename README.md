@@ -13,3 +13,8 @@ Run it
 
 You should use SBT, and execute: ```sbt run```
 
+Visualise the results
+------
+
+You should use RStudio, open the files ui.R and server.R, and execute: ```Run App```
+

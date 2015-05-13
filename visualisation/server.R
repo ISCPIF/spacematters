@@ -8,11 +8,24 @@ library(lattice)
 
 
 shinyServer(function(input, output) {
-  resultFile <- reactiveValues(location= "data/result.csv")
+  resultFile <- reactiveValues(datapath= "data/result.csv")
+
   
   output$map_cell <- renderPlot({
-    result <- read.csv(resultFile$location, sep=",", dec=".", header=F)
-
+    inFile <- input$file1
+    
+    if (is.null(inFile)) {
+      result <- read.csv(resultFile$datapath, sep=",", dec=".", header=F)
+    }
+    
+    if (!is.null(inFile)) {
+      result <- read.csv(inFile$datapath, header=input$header, sep=input$sep, 
+                         quote=input$quote)
+    }
+  
+    
+    
+  
     colnames(result) <- c("step", "x", "y", "capacity", "greens", "reds")
  result$totalPop <- result$greens + result$red
  result$pctgreens <- result$greens / result$totalPop * 100
