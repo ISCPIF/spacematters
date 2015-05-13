@@ -16,5 +16,8 @@ You should use SBT, and execute: ```sbt run```
 Visualise the results
 ------
 
-You should use RStudio, open the files ui.R and server.R, and execute: ```Run App```
+Go to the online app : https://clementinegeo.shinyapps.io/visualisation/
+Or use RStudio, open the files ui.R or server.R in the "visualisation" folder, and execute: ```Run App```
+
+To visualise your own model results, upload csv files named "result.csv".
 

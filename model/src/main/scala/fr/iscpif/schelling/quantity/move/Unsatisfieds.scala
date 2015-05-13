@@ -24,14 +24,18 @@ trait Unsatisfieds <: Neighborhood {
 
   def similarWanted: Double
 
+  def unsatisfied(state: State, position: Position, color: Color) = {
+    val neighbourCells = neighbors(state, position)
+    val population = neighbourCells.map(_.population).sum
+    val colorPopulation = neighbourCells.map(color.cellColor.get).sum
+    colorPopulation.toDouble / population < similarWanted
+  }
+
   def unsatisfieds(state: State): Seq[Unsatisfied] = {
     for {
       (position, c) <- state.cells
-      neighbourCells = neighbors(state, position)
-      population = neighbourCells.map(_.population).sum
       color <- Color.all
-      colorPopulation = neighbourCells.map(color.cellColor.get).sum
-      if (colorPopulation.toDouble / population < similarWanted)
+      if unsatisfied(state, position, color)
     } yield Unsatisfied(position, color, color.cellColor.get(c))
   }
 }
