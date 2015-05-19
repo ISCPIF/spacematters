@@ -16,7 +16,7 @@
  */
 package fr.iscpif.schelling.quantity.move
 
-import fr.iscpif.schelling.quantity.State
+import fr.iscpif.schelling.quantity._
 
 trait Neighborhood {
 

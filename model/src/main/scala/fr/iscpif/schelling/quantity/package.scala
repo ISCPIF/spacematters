@@ -32,4 +32,6 @@ package object quantity {
       } yield (i, j) -> e
   }
 
+  type Position = (Int, Int)
+
 }

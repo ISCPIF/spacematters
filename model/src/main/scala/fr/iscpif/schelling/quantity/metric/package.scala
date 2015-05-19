@@ -26,8 +26,8 @@ package object metric {
   def total(color: Color, cells: Seq[Cell]) =
     cells.map(color.cellColor.get).sum
 
-  def dissimilarity(cells: Seq[Seq[Cell]], color1: Color, color2: Color): Double = {
-    val flatCells = cells.flatten
+  def dissimilarity(state: State, color1: Color, color2: Color): Double = {
+    val flatCells = state.matrix.flatten
     val totalPopulation = Seq(color1, color2).map { color => color -> total(color, flatCells) }.toMap
 
     flatCells.map {
@@ -38,8 +38,8 @@ package object metric {
     }.sum * 0.5
   }
 
-  def entropy(cells: Seq[Seq[Cell]], color1: Color, color2: Color): Double = {
-    val flatCells = cells.flatten
+  def entropy(state: State, color1: Color, color2: Color): Double = {
+    val flatCells = state.matrix.flatten
     val totalPopulation = Seq(color1, color2).map { color => color -> total(color, flatCells) }.toMap
     val totalPropColor1 = totalPopulation(color1).toDouble / (totalPopulation(color1).toDouble + totalPopulation(color2).toDouble)
     val totalPropColor2 = totalPopulation(color2).toDouble / (totalPopulation(color1).toDouble + totalPopulation(color2).toDouble)
@@ -81,8 +81,8 @@ package object metric {
     }.sum
   }
 
-  def exposureOfColor1ToColor2(cells: Seq[Seq[Cell]], color1: Color, color2: Color): Double = {
-    val flatCells = cells.flatten
+  def exposureOfColor1ToColor2(state: State, color1: Color, color2: Color): Double = {
+    val flatCells = state.matrix.flatten
     val totalPopulation = Seq(color1, color2).map { color => color -> total(color, flatCells) }.toMap
     val totalPopColor1 = totalPopulation(color1).toDouble
 
@@ -101,8 +101,8 @@ package object metric {
     }.sum
   }
 
-  def isolation(cells: Seq[Seq[Cell]], color1: Color, color2: Color): Double = {
-    val flatCells = cells.flatten
+  def isolation(state: State, color1: Color, color2: Color): Double = {
+    val flatCells = state.matrix.flatten
     val totalPopulation = Seq(color1, color2).map { color => color -> total(color, flatCells) }.toMap
     val totalPopColor1 = totalPopulation(color1).toDouble
 
@@ -121,8 +121,8 @@ package object metric {
     }.sum
   }
 
-  def delta(cells: Seq[Seq[Cell]], color1: Color, color2: Color): Double = {
-    val flatCells = cells.flatten
+  def delta(state: State, color1: Color, color2: Color): Double = {
+    val flatCells = state.matrix.flatten
     val totalPopulation = Seq(color1, color2).map { color => color -> total(color, flatCells) }.toMap
     val totalPopColor1 = totalPopulation(color1).toDouble
     val NCells = flatCells.size
@@ -135,4 +135,22 @@ package object metric {
 
     }.sum * 0.5
   }
+
+  def spatialIndicator(state: State): Double = {
+    val indicator =
+      for {
+        (position, cell) <- state.cells
+        adjacentCell <- adjacentCells(state, position)
+      } yield 0.0
+    indicator.sum
+  }
+
+  def adjacentCells(state: State, position: Position, size: Int = 1) =
+    for {
+      oi <- -size to size
+      oj <- -size to size
+      (i, j) = position
+      if i != oi || j != oj
+    } yield state(i + oi)(j + oj)
+
 }

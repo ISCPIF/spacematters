@@ -31,7 +31,7 @@ object Simulation extends App {
     (state, step) <- simulation.states.take(100).zipWithIndex
   } {
     def unsatisfied = simulation.unsatisfieds(state).map(_.number).sum
-    println(s"Step $step: # of unsatisfied: $unsatisfied, Dissimilarity D: ${"%.3f".format(dissimilarity(state.matrix, Green, Red))}, Entropy H: ${"%.3f".format(entropy(state.matrix, Green, Red))}, Exposure Reds to Greens :${"%.3f".format(exposureOfColor1ToColor2(state.matrix, Red, Green))}, Isolation Reds :${"%.3f".format(isolation(state.matrix, Red, Green))}, Concentration Greens : ${"%.3f".format(delta(state.matrix, Green, Red))}")
+    println(s"Step $step: # of unsatisfied: $unsatisfied, Dissimilarity D: ${"%.3f".format(dissimilarity(state, Green, Red))}, Entropy H: ${"%.3f".format(entropy(state, Green, Red))}, Exposure Reds to Greens :${"%.3f".format(exposureOfColor1ToColor2(state, Red, Green))}, Isolation Reds :${"%.3f".format(isolation(state, Red, Green))}, Concentration Greens : ${"%.3f".format(delta(state, Green, Red))}")
 
     for { (position @ (i, j), c) <- state.cells } {
       def agents = Color.all.map(_.cellColor.get(c)).mkString(",")
