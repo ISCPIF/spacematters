@@ -8,17 +8,38 @@ library(lattice)
 
 
 shinyServer(function(input, output) {
-  resultFile <- reactiveValues(location= "data/result.csv")
+  resultFile <- reactiveValues(datapath= "data/result.csv")
+
   
   output$map_cell <- renderPlot({
-    result <- read.csv(resultFile$location, sep=",", dec=".", header=F)
-
-    colnames(result) <- c("step", "x", "y", "capacity", "greens", "reds")
+    inFile <- input$file1
+    
+    if (is.null(inFile)) {
+      result <- read.csv(resultFile$datapath, sep=",", dec=".", header=F)
+    }
+    
+    if (!is.null(inFile)) {
+      result <- read.csv(inFile$datapath, header=input$header, sep=input$sep, 
+                         quote=input$quote)
+    }
+  
+    
+    
+   # result <- read.csv("data/result.csv", sep=",", dec=".", header=F)
+    summary(result)
+    colnames(result) <- c("step", "x", "y", "capacity", "greens", "reds", "satisgreen", "satisred")
  result$totalPop <- result$greens + result$red
  result$pctgreens <- result$greens / result$totalPop * 100
  result$pctreds <- result$reds / result$totalPop * 100
  result$empty <- result$capacity - result$totalPop
  result$pctempty <- result$empty / result$capacity * 100
+ result$satisfiedgreen <- ifelse(result$satisgreen == "false", result$greens, 0)
+ result$satisfiedred <- ifelse(result$satisred == "false", result$reds, 0)
+ result$satisfied <-  result$satisfiedgreen +  result$satisfiedred
+ result$pctsatisfied <- result$satisfied / result$totalPop * 100
+ result$pctunsatisfied <-  100 -  result$pctsatisfied
+ 
+ 
  
  currentstep <- subset(result, step == input$step)[,-1]
  
@@ -35,7 +56,7 @@ size <- dim(map)[[1]]
 if (input$var == "totalPop") my_palette <- colorRampPalette(c("white", "black"))(n = 299)
 if (input$var == "pctgreens") my_palette <- colorRampPalette(c("white", "forestgreen"))(n = 299)
 if (input$var == "pctreds") my_palette <- colorRampPalette(c("white", "firebrick1"))(n = 299)
-if (input$var == "maj") my_palette <- colorRampPalette(c("forestgreen", "grey", "firebrick1"))(n = 100)
+if (input$var == "pctunsatisfied") my_palette <- colorRampPalette(c("white", "dodgerblue3"))(n = 100)
 
 mapPop <- levelplot(map, 
           col.regions=my_palette, 
