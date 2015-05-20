@@ -136,13 +136,30 @@ package object metric {
     }.sum * 0.5
   }
 
-  def spatialIndicator(state: State): Double = {
-    val indicator =
+  def spatialIndicator(state: State, color: Color): Double = {
+    def cells = state.matrix.flatten
+    val totalPopulation = cells.map(_.population).sum
+    val globalColorRatio = cells.map(color.cellColor.get).sum.toDouble / totalPopulation
+
+    def colorRation(cell: Cell) = color.cellColor.get(cell).toDouble / cell.population
+
+    def pairs =
       for {
-        (position, cell) <- state.cells
-        adjacentCell <- adjacentCells(state, position)
-      } yield 0.0
-    indicator.sum
+        (position, cellI) <- state.cells
+        cellJ <- adjacentCells(state, position)
+      } yield (cellI, cellJ)
+
+    def numerator =
+      pairs.map {
+        case (cellI, cellJ) => (colorRation(cellI) - globalColorRatio) * (colorRation(cellJ) - globalColorRatio)
+      }.sum
+
+    def denominator =
+      cells.map {
+        cell => pow(colorRation(cell) - globalColorRatio, 2)
+      }.sum
+
+    (cells.size.toDouble / pairs.size) * (numerator / denominator)
   }
 
   def adjacentCells(state: State, position: Position, size: Int = 1) =
