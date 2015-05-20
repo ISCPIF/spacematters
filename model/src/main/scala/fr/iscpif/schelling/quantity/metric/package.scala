@@ -136,7 +136,8 @@ package object metric {
     }.sum * 0.5
   }
 
-  def spatialIndicator(state: State, color: Color): Double = {
+
+  def moran(state: State, color: Color): Double = {
     def cells = state.matrix.flatten
     val totalPopulation = cells.map(_.population).sum
     val globalColorRatio = cells.map(color.cellColor.get).sum.toDouble / totalPopulation
@@ -161,6 +162,7 @@ package object metric {
 
     (cells.size.toDouble / pairs.size) * (numerator / denominator)
   }
+
 
   def adjacentCells(state: State, position: Position, size: Int = 1) =
     for {
