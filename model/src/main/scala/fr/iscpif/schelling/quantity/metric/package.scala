@@ -136,13 +136,12 @@ package object metric {
     }.sum * 0.5
   }
 
-
   def moran(state: State, color: Color): Double = {
-    def cells = state.matrix.flatten
-    val totalPopulation = cells.map(_.population).sum
-    val globalColorRatio = cells.map(color.cellColor.get).sum.toDouble / totalPopulation
+    def flatCells = state.matrix.flatten
+    val totalPopulation = flatCells.map(_.population).sum
+    val globalColorRatio = flatCells.map(color.cellColor.get).sum.toDouble / totalPopulation.toDouble
 
-    def colorRation(cell: Cell) = color.cellColor.get(cell).toDouble / cell.population
+    def colorRatio(cell: Cell) = color.cellColor.get(cell).toDouble / cell.population
 
     def pairs =
       for {
@@ -152,17 +151,29 @@ package object metric {
 
     def numerator =
       pairs.map {
-        case (cellI, cellJ) => (colorRation(cellI) - globalColorRatio) * (colorRation(cellJ) - globalColorRatio)
+        case (cellI, cellJ) =>
+          val term1 =
+            if (cellI.population == 0) 0
+            else (colorRatio(cellI) - globalColorRatio.toDouble)
+          val term2 =
+            if (cellJ.population == 0) 0
+            else (colorRatio(cellJ) - globalColorRatio.toDouble)
+          term1 * term2
       }.sum
 
     def denominator =
-      cells.map {
-        cell => pow(colorRation(cell) - globalColorRatio, 2)
+      flatCells.map {
+        cell =>
+          if (cell.population == 0) 0
+          else pow(colorRatio(cell) - globalColorRatio.toDouble, 2)
       }.sum
 
-    (cells.size.toDouble / pairs.size) * (numerator / denominator)
-  }
+    val nbAdjacentCells = pairs.size.toDouble
+    val NCells = flatCells.size
 
+    if (denominator.toDouble == 0) 0
+    else (NCells.toDouble / nbAdjacentCells.toDouble) * (numerator.toDouble / denominator.toDouble)
+  }
 
   def adjacentCells(state: State, position: Position, size: Int = 1) =
     for {
