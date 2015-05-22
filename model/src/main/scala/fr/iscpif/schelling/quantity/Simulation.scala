@@ -15,7 +15,7 @@ object Simulation extends App {
   implicit val rng = new Random
 
   val simulation = new Schelling with RandomState with RandomMoves {
-    override def size: Int = 50
+    override def size: Int = 20
     override def greenRatio: Double = 0.5
     override def redRatio: Double = 0.35
     override def maxCapacity: Int = 50
@@ -36,7 +36,8 @@ object Simulation extends App {
     for { (position @ (i, j), c) <- state.cells } {
       def agents = Color.all.map(_.cellColor.get(c)).mkString(",")
       def unsatisfied = Color.all.map { color => simulation.unsatisfied(state, position, color) }.mkString(",")
-      output.append(s"""$step,$i,$j,${c.capacity},$agents,$unsatisfied\n""")
+      output.append(
+        s"""$step,$i,$j,${c.capacity},$agents,$unsatisfied,${"%.3f".format(dissimilarity(state, Green, Red))}, ${"%.3f".format(moran(state, Red))}, ${"%.3f".format(entropy(state, Green, Red))}, ${"%.3f".format(exposureOfColor1ToColor2(state, Red, Green))},${"%.3f".format(exposureOfColor1ToColor2(state, Green, Red))}, ${"%.3f".format(isolation(state, Red, Green))}, ${"%.3f".format(isolation(state, Green, Red))},${"%.3f".format(delta(state, Red, Green))},${"%.3f".format(delta(state, Green, Red))}\n""".stripMargin)
     }
 
   }
