@@ -47,7 +47,7 @@ shinyUI(fluidPage(
              plotOutput("map_cell"),
              h3("Segregation measures"),
              tableOutput("measurestable"),
-             h3("Measures correlation"),
+             h3("Measures correlation across steps"),
              plotOutput("plotindexes")
    )
     

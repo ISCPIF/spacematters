@@ -190,7 +190,7 @@ output$measurestable <- renderTable({
   
    indexes <- resultTable$datamacro[,1:11]
   colnames(indexes) <-  c("step", "unsatisfied","dissimilarity", "moranRed","Entropy", "ExposureRed",
-                          "ExposureGreen", "IsolationRed","IsolationGreen",
+                          "ExposureGreen", "IsolationRed", "IsolationGreen",
                           "ConcentrationRed",  "ConcentrationGreen")
   rownames(indexes) <-   as.numeric(rownames(indexes)) - 1
   
@@ -200,10 +200,10 @@ output$measurestable <- renderTable({
 
 
 output$plotindexes <- renderPlot({
-  indexes <- resultTable$datamacro[,1:11]
-  colnames(indexes) <-  c("step", "unsatisfied","dissimilarity", "moranRed","Entropy", "ExposureRed",
+  indexes <- resultTable$datamacro[,2:11]
+  colnames(indexes) <-  c("unsatisfied","dissimilarity", "moranRed","Entropy", "ExposureRed",
                           "ExposureGreen", "IsolationRed","IsolationGreen",
-                          "ConcentrationRed",  "ConcentrationGreen", )
+                          "ConcentrationRed",  "ConcentrationGreen" )
   p <- rquery.cormat(indexes, type="full")
   return(p)
 })
