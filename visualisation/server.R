@@ -8,29 +8,25 @@ library(lattice)
 
 
 shinyServer(function(input, output) {
-  resultFile <- reactiveValues(datapath= "data/result.csv")
-  resultTable <- reactiveValues(data = NULL)
+  resultFile <- reactiveValues(pathmacro= "data/resultmacro.csv", pathmicro= "data/resultmicro.csv")
+  resultTable <- reactiveValues(datamacro = NULL, datamicro = NULL)
   
   
   output$map_cell <- renderPlot({
-    inFile <- input$file1
-    
-    if (is.null(inFile)) {
-      result <- read.csv(resultFile$datapath, sep=",", dec=".", header=F)
+    inMicroFile <- input$file1  
+    if (is.null(inMicroFile)) {
+      resultTable$datamicro <- read.csv(resultFile$pathmicro, sep=",", dec=".", header=F)
     }
-    
-    if (!is.null(inFile)) {
-      result <- read.csv(inFile$datapath, header=input$header, sep=input$sep, 
+    if (!is.null(inMicroFile)) {
+      resultTable$datamicro <- read.csv(inMicroFile$datapath, header=input$header, sep=input$sep, 
                          quote=input$quote)
     }
   
     
-    
    # result <- read.csv("data/result.csv", sep=",", dec=".", header=F)
     #summary(result)
-    colnames(result) <- c("step", "x", "y", "capacity", "greens", "reds", "satisgreen", "satisred",
-                          "dissimilarity", "moranRed", "Entropy", "ExposureRed", "ExposureGreen", 
-                          "IsolationRed", "IsolationGreen", "ConcentrationRed", "ConcentrationGreen")
+   result <- resultTable$datamicro
+    colnames(result) <- c("step", "x", "y", "capacity", "greens", "reds", "satisgreen", "satisred")
  result$totalPop <- result$greens + result$red
  result$pctgreens <- result$greens / result$totalPop * 100
  result$pctreds <- result$reds / result$totalPop * 100
@@ -77,32 +73,35 @@ return(mapPop)
 
 
 
-output$measurestable <- renderDataTable({
-  Table <- as.data.frame(resultTable$data)
-  currentstep <- subset(Table, step == input$step)[,-1]
-   indexes <- c("pctunsatisfied","dissimilarity", "moranRed","Entropy", "ExposureRed",
-                      "ExposureGreen", "IsolationRed","IsolationGreen",
-                      "ConcentrationRed",  "ConcentrationGreen")
-  indextable <- currentstep[1,indexes]
- return(indextable)
-})
+output$measurestable <- renderTable({
+  
+  inMacroFile <- input$file2
+  if (is.null(inMacroFile)) {
+    resultTable$datamacro <- read.csv(resultFile$pathmacro, sep=",", dec=".", header=F)
+  }
+  if (!is.null(inMacroFile)) {
+    resultTable$datamacro <- read.csv(inMicroFile$datapath, header=input$header, sep=input$sep, 
+                        quote=input$quote)
+  }
+  
+  indexes <- resultTable$datamacro
+  colnames(indexes) <-  c("step", "unsatisfied","dissimilarity", "moranRed","Entropy", "ExposureRed",
+                          "ExposureGreen", "IsolationRed","IsolationGreen",
+                          "ConcentrationRed",  "ConcentrationGreen")
+  currentstep <- subset(indexes, step == input$step)[,-1]
+ return(currentstep)
+},digits = 3)
 
 
 output$plotindexes <- renderPlot({
-  Table <- as.data.frame(resultTable$data)
-  indexes <- c("pctunsatisfied","dissimilarity", "moranRed","Entropy", "ExposureRed",
-               "ExposureGreen", "IsolationRed","IsolationGreen",
-               "ConcentrationRed",  "ConcentrationGreen")
-  
-  firststep <- subset(Table, step == 0)[,-1]
-  indextable <- firststep[1,indexes]
-  for (step in c(1:99)) {
-    steptable <- subset(Table, step == step)[1,-1]
-    indexstep <- steptable[1,indexes]
-    indextable <- rbind(indextable, indexstep)
-  }
-  p <- plot(indextable)
-  return(p)
+  indexes <- resultTable$datamacro
+  colnames(indexes) <-  c("step", "unsatisfied","dissimilarity", "moranRed","Entropy", "ExposureRed",
+                          "ExposureGreen", "IsolationRed","IsolationGreen",
+                          "ConcentrationRed",  "ConcentrationGreen")
+  plot(indexes)
 })
+
+
+
 })
 

@@ -4,7 +4,23 @@ shinyUI(fluidPage(
   tags$head(tags$link(rel="shortcut icon", href="favicon.png")),
   titlePanel("Schelling Viz"),  
   sidebarPanel(
-    fileInput('file1', 'Choose CSV File',
+    fileInput('file1', 'CSV File at the cell level',
+              accept=c('text/csv', 
+                       'text/comma-separated-values,text/plain', 
+                       '.csv')),
+    checkboxInput('header', 'Header', FALSE),
+    radioButtons('sep', 'Separator',
+                 c(Comma=',',
+                   Semicolon=';',
+                   Tab='\t'),
+                 ','),
+    radioButtons('quote', 'Quote',
+                 c(None='',
+                   'Double Quote'='"',
+                   'Single Quote'="'"),
+                 '"'),
+    br(), 
+    fileInput('file2', 'CSV File at the aggregated level',
               accept=c('text/csv', 
                        'text/comma-separated-values,text/plain', 
                        '.csv')),
@@ -20,6 +36,7 @@ shinyUI(fluidPage(
                    'Single Quote'="'"),
                  '"')
   ),
+ 
    mainPanel(
 
               fluidRow(
@@ -36,8 +53,8 @@ shinyUI(fluidPage(
                                               ), selected = "pctgreens"))
              ),
              plotOutput("map_cell"),
-             dataTableOutput("measurestable")#,
-            # plotOutput("plotindexes")
+             tableOutput("measurestable"),
+             plotOutput("plotindexes")
    )
     
 
