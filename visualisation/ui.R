@@ -35,7 +35,9 @@ shinyUI(fluidPage(
                                               "% Unsatisfied"="pctunsatisfied"
                                               ), selected = "pctgreens"))
              ),
-             plotOutput("map_cell")
+             plotOutput("map_cell"),
+             dataTableOutput("measurestable")#,
+            # plotOutput("plotindexes")
    )
     
 

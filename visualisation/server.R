@@ -9,7 +9,8 @@ library(lattice)
 
 shinyServer(function(input, output) {
   resultFile <- reactiveValues(datapath= "data/result.csv")
-
+  resultTable <- reactiveValues(data = NULL)
+  
   
   output$map_cell <- renderPlot({
     inFile <- input$file1
@@ -26,8 +27,10 @@ shinyServer(function(input, output) {
     
     
    # result <- read.csv("data/result.csv", sep=",", dec=".", header=F)
-    summary(result)
-    colnames(result) <- c("step", "x", "y", "capacity", "greens", "reds", "satisgreen", "satisred")
+    #summary(result)
+    colnames(result) <- c("step", "x", "y", "capacity", "greens", "reds", "satisgreen", "satisred",
+                          "dissimilarity", "moranRed", "Entropy", "ExposureRed", "ExposureGreen", 
+                          "IsolationRed", "IsolationGreen", "ConcentrationRed", "ConcentrationGreen")
  result$totalPop <- result$greens + result$red
  result$pctgreens <- result$greens / result$totalPop * 100
  result$pctreds <- result$reds / result$totalPop * 100
@@ -39,9 +42,11 @@ shinyServer(function(input, output) {
  result$pctsatisfied <- result$satisfied / result$totalPop * 100
  result$pctunsatisfied <-  100 -  result$pctsatisfied
  
+ resultTable$data  <- result
  
+ Table <- as.data.frame(resultTable$data)
  
- currentstep <- subset(result, step == input$step)[,-1]
+ currentstep <- subset(Table, step == input$step)[,-1]
  
  tempo <- melt(currentstep,
                id.vars=c("x","y"),
@@ -69,4 +74,35 @@ mapPop <- levelplot(map,
  
 return(mapPop)
   })
+
+
+
+output$measurestable <- renderDataTable({
+  Table <- as.data.frame(resultTable$data)
+  currentstep <- subset(Table, step == input$step)[,-1]
+   indexes <- c("pctunsatisfied","dissimilarity", "moranRed","Entropy", "ExposureRed",
+                      "ExposureGreen", "IsolationRed","IsolationGreen",
+                      "ConcentrationRed",  "ConcentrationGreen")
+  indextable <- currentstep[1,indexes]
+ return(indextable)
 })
+
+
+output$plotindexes <- renderPlot({
+  Table <- as.data.frame(resultTable$data)
+  indexes <- c("pctunsatisfied","dissimilarity", "moranRed","Entropy", "ExposureRed",
+               "ExposureGreen", "IsolationRed","IsolationGreen",
+               "ConcentrationRed",  "ConcentrationGreen")
+  
+  firststep <- subset(Table, step == 0)[,-1]
+  indextable <- firststep[1,indexes]
+  for (step in c(1:99)) {
+    steptable <- subset(Table, step == step)[1,-1]
+    indexstep <- steptable[1,indexes]
+    indextable <- rbind(indextable, indexstep)
+  }
+  p <- plot(indextable)
+  return(p)
+})
+})
+
