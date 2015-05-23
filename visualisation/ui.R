@@ -14,11 +14,6 @@ shinyUI(fluidPage(
                    Semicolon=';',
                    Tab='\t'),
                  ','),
-    radioButtons('quote', 'Quote',
-                 c(None='',
-                   'Double Quote'='"',
-                   'Single Quote'="'"),
-                 '"'),
     br(), 
     fileInput('file2', 'CSV File at the aggregated level',
               accept=c('text/csv', 
@@ -29,18 +24,15 @@ shinyUI(fluidPage(
                  c(Comma=',',
                    Semicolon=';',
                    Tab='\t'),
-                 ','),
-    radioButtons('quote', 'Quote',
-                 c(None='',
-                   'Double Quote'='"',
-                   'Single Quote'="'"),
-                 '"')
+                 ',')
   ),
  
    mainPanel(
 
               fluidRow(
-                
+                h3("Model Parameterization"),
+                tableOutput("paramtable"),
+                h3("Spatial Distributions"),
                column(6,
                       sliderInput("step", label = "Simulation Step",
                            min = 0, max = 99, value = 0, step = 1, animate=T)),
@@ -53,7 +45,9 @@ shinyUI(fluidPage(
                                               ), selected = "pctgreens"))
              ),
              plotOutput("map_cell"),
+             h3("Segregation measures"),
              tableOutput("measurestable"),
+             h3("Measures correlation"),
              plotOutput("plotindexes")
    )
     

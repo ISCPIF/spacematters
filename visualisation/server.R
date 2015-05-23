@@ -110,8 +110,7 @@ shinyServer(function(input, output) {
       resultTable$datamicro <- read.csv(resultFile$pathmicro, sep=",", dec=".", header=F)
     }
     if (!is.null(inMicroFile)) {
-      resultTable$datamicro <- read.csv(inMicroFile$datapath, header=input$header, sep=input$sep, 
-                         quote=input$quote)
+      resultTable$datamicro <- read.csv(inMicroFile$datapath, header=input$header, sep=input$sep)
     }
   
     
@@ -165,18 +164,31 @@ return(mapPop)
 
 
 
-output$measurestable <- renderTable({
+
+output$paramtable <- renderTable({
   
   inMacroFile <- input$file2
   if (is.null(inMacroFile)) {
     resultTable$datamacro <- read.csv(resultFile$pathmacro, sep=",", dec=".", header=F)
   }
   if (!is.null(inMacroFile)) {
-    resultTable$datamacro <- read.csv(inMicroFile$datapath, header=input$header, sep=input$sep, 
-                        quote=input$quote)
+    resultTable$datamacro <- read.csv(inMicroFile$datapath, header=input$header, sep=input$sep)
   }
   
-  indexes <- resultTable$datamacro
+  param <- resultTable$datamacro[1,12:16]
+  colnames(param) <-  c("Size","greenRatio","redRatio", "maxCapacity", "similarWanted")
+   return(param)
+})
+
+
+
+
+
+
+
+output$measurestable <- renderTable({
+  
+   indexes <- resultTable$datamacro[,1:11]
   colnames(indexes) <-  c("step", "unsatisfied","dissimilarity", "moranRed","Entropy", "ExposureRed",
                           "ExposureGreen", "IsolationRed","IsolationGreen",
                           "ConcentrationRed",  "ConcentrationGreen")
@@ -188,10 +200,10 @@ output$measurestable <- renderTable({
 
 
 output$plotindexes <- renderPlot({
-  indexes <- resultTable$datamacro
+  indexes <- resultTable$datamacro[,1:11]
   colnames(indexes) <-  c("step", "unsatisfied","dissimilarity", "moranRed","Entropy", "ExposureRed",
                           "ExposureGreen", "IsolationRed","IsolationGreen",
-                          "ConcentrationRed",  "ConcentrationGreen")
+                          "ConcentrationRed",  "ConcentrationGreen", )
   p <- rquery.cormat(indexes, type="full")
   return(p)
 })

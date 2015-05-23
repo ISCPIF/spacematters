@@ -51,8 +51,14 @@ object Simulation extends App {
     def unsatisfied = simulation.unsatisfieds(state).map(_.number).sum
     println(s"Step $step")
 
+    val size = simulation.size
+    val greenRatio = simulation.greenRatio
+    val redRatio = simulation.redRatio
+    val maxCapacity = simulation.maxCapacity
+    val similarWanted = simulation.similarWanted
+
     output2.append(
-      s"""$step,$unsatisfied,${dissimilarity(state, Green, Red)}, ${moran(state, Red)}, ${entropy(state, Green, Red)}, ${exposureOfColor1ToColor2(state, Red, Green)},${exposureOfColor1ToColor2(state, Green, Red)}, ${isolation(state, Red, Green)}, ${isolation(state, Green, Red)},${delta(state, Red, Green)},${delta(state, Green, Red)}\n""".stripMargin)
+      s"""$step, $unsatisfied,${dissimilarity(state, Green, Red)}, ${moran(state, Red)}, ${entropy(state, Green, Red)}, ${exposureOfColor1ToColor2(state, Red, Green)},${exposureOfColor1ToColor2(state, Green, Red)}, ${isolation(state, Red, Green)}, ${isolation(state, Green, Red)},${delta(state, Red, Green)},${delta(state, Green, Red)}, $size, $greenRatio,$redRatio, $maxCapacity, $similarWanted\n""".stripMargin)
 
   }
 
