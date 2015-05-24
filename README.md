@@ -17,7 +17,7 @@ Visualise the results
 ------
 
 Go to the online app : https://clementinegeo.shinyapps.io/visualisation/
-Or use RStudio, open the files ui.R or server.R in the "visualisation" folder, and execute: ```Run App```
+Or use RStudio, open the files ui.R or server.R in the "visualisation" folder, and click : ```Run App```
 
-To visualise your own model results, upload csv files named "result.csv".
+To visualise your own model results, upload csv files named "resultmicro.csv" for cell description across steps, and "resultmacro.csv" for parameters and output measures across steps.
 
