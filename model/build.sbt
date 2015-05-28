@@ -18,3 +18,12 @@ libraryDependencies += "com.github.scala-incubator.io" %% "scala-io-core" % "0.4
 
 scalariformSettings
 
+osgiSettings
+
+OsgiKeys.exportPackage := Seq("fr.iscpif.schelling.quantity.*")
+
+OsgiKeys.importPackage := Seq("*;resolution:=optional")
+
+OsgiKeys.privatePackage := Seq("*")
+
+
