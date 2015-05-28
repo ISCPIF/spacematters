@@ -44,16 +44,17 @@ object Simulation extends App {
       def unsatisfied = Color.all.map { color => simulation.unsatisfied(state, position, color) }.mkString(",")
       output1.append(
         s"""$step,$i,$j,${c.capacity},$agents,$unsatisfied\n""".stripMargin)
-
-      val size = simulation.size
-      val greenRatio = simulation.greenRatio
-      val redRatio = simulation.redRatio
-      val maxCapacity = simulation.maxCapacity
-      val similarWanted = simulation.similarWanted
-
-      output2.append(
-        s"""$step, $unsatisfied,${dissimilarity(state, Green, Red)}, ${moran(state, Red)}, ${entropy(state, Green, Red)}, ${exposureOfColor1ToColor2(state, Red, Green)},${exposureOfColor1ToColor2(state, Green, Red)}, ${isolation(state, Red, Green)}, ${isolation(state, Green, Red)},${delta(state, Red, Green)},${delta(state, Green, Red)}, $size, $greenRatio,$redRatio, $maxCapacity, $similarWanted\n""".stripMargin)
     }
+
+    val size = simulation.size
+    val greenRatio = simulation.greenRatio
+    val redRatio = simulation.redRatio
+    val maxCapacity = simulation.maxCapacity
+    val similarWanted = simulation.similarWanted
+
+    output2.append(
+      s"""$step, $unsatisfied,${dissimilarity(state, Green, Red)}, ${moran(state, Red)}, ${entropy(state, Green, Red)}, ${exposureOfColor1ToColor2(state, Red, Green)},${exposureOfColor1ToColor2(state, Green, Red)}, ${isolation(state, Red, Green)}, ${isolation(state, Green, Red)},${delta(state, Red, Green)},${delta(state, Green, Red)}, $size, $greenRatio,$redRatio, $maxCapacity, $similarWanted\n""".stripMargin)
+
   }
 
 }

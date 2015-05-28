@@ -22,21 +22,22 @@ import scala.util.{ Random, Try }
 
 trait SpeilmanStop <: Schelling {
 
+  case class ResultState(step: Int, state: State)
+
   def maxStep = 200
   def maxUnsatisfied = 0.98
   def unsatisfiedWindow = 20
   def minimumVariation = 0.1
 
-  def run(implicit rng: Random): Option[State] = {
+  def run(implicit rng: Random): ResultState = {
     def average(s: Seq[Double]) = s.sum / s.size
     val windows = states.map { s => s -> average(unsatisfieds(s).map(_.number.toDouble)) }.zipWithIndex.sliding(unsatisfiedWindow)
 
-    def lastState(window: Seq[((State, Double), Int)]): Option[State] = {
+    def lastState(window: Seq[((State, Double), Int)]): ResultState = {
       def tooManySteps = window.last._2 >= maxStep
       def maxUnsatisfiedReached = window.exists { case ((_, u), _) => u > maxUnsatisfied }
       def underMinimumVariation = (window.unzip._2.max - window.unzip._2.min) < minimumVariation
-      if (tooManySteps) None
-      else if (maxUnsatisfiedReached || underMinimumVariation) Some(window.last._1._1)
+      if (tooManySteps || maxUnsatisfiedReached || underMinimumVariation) ResultState(window.last._2, window.last._1._1)
       else lastState(windows.next)
     }
 

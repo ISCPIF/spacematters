@@ -38,4 +38,6 @@ trait Unsatisfieds <: Neighborhood {
       if unsatisfied(state, position, color)
     } yield Unsatisfied(position, color, color.cellColor.get(c))
   }
+
+  def numberOfUnsatisfieds(state: State) = unsatisfieds(state).map(_.number).sum
 }
