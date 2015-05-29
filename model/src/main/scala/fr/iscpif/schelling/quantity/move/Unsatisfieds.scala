@@ -39,5 +39,8 @@ trait Unsatisfieds <: Neighborhood {
     } yield Unsatisfied(position, color, color.cellColor.get(c))
   }
 
-  def numberOfUnsatisfieds(state: State) = unsatisfieds(state).map(_.number).sum
+  def unsatisifedRatio(state: State) = {
+    val numberOfUnsatisfieds = unsatisfieds(state).map(_.number).sum
+    numberOfUnsatisfieds.toDouble / state.matrix.flatten.map(_.population).sum
+  }
 }

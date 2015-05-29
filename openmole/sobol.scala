@@ -9,7 +9,7 @@ val seed = Val[Long]
 
 // Outputs
 val step = Val[Int]
-val unsatisfied = Val[Int]
+val unsatisfiedRatio = Val[Int]
 val dissimilarity = Val[Double]
 val moran = Val[Double]
 val entropy = Val[Double]
@@ -32,7 +32,7 @@ val modelTask =
     |
     |val result = simulation.run(newRNG(seed))
     |val step = result.step
-    |val unsatisfied = simulation.numberOfUnsatisfieds(result.state)
+    |val unsatisfiedRatio = simulation.unsatisifedRatio(result.state)
     |import Color._
     |val dissimilarity = metric.dissimilarity(result.state, Green, Red)
     |val moran = metric.moran(result.state, Red)
@@ -51,7 +51,7 @@ val modelTask =
     imports += "stop._",
     inputs += (greenRatio, redRatio, maxCapacity, similarWanted, seed),
     outputs += (greenRatio, redRatio, maxCapacity, similarWanted, seed),
-    outputs += (step, unsatisfied, dissimilarity, moran, entropy, exposureRedGreen, exposureGreenRed, isolationRedGreen, isolationGreenRed, deltaRedGreen, deltaGreenRed)
+    outputs += (step, unsatisfiedRatio, dissimilarity, moran, entropy, exposureRedGreen, exposureGreenRed, isolationRedGreen, isolationGreenRed, deltaRedGreen, deltaGreenRed)
   )
 
 val model = Capsule(modelTask)

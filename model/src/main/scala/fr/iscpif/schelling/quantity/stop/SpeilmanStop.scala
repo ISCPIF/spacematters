@@ -25,18 +25,21 @@ trait SpeilmanStop <: Schelling {
   case class ResultState(step: Int, state: State)
 
   def maxStep = 200
-  def maxUnsatisfied = 0.98
-  def unsatisfiedWindow = 20
+  def maxSatisfied = 0.98
+  def satisfiedWindow = 20
   def minimumVariation = 0.1
 
   def run(implicit rng: Random): ResultState = {
     def average(s: Seq[Double]) = s.sum / s.size
-    val windows = states.map { s => s -> average(unsatisfieds(s).map(_.number.toDouble)) }.zipWithIndex.sliding(unsatisfiedWindow)
+    val windows = states.map { s => s -> unsatisifedRatio(s) }.zipWithIndex.sliding(satisfiedWindow)
 
     def lastState(window: Seq[((State, Double), Int)]): ResultState = {
       def tooManySteps = window.last._2 >= maxStep
-      def maxUnsatisfiedReached = window.exists { case ((_, u), _) => u > maxUnsatisfied }
-      def underMinimumVariation = (window.unzip._2.max - window.unzip._2.min) < minimumVariation
+      def maxUnsatisfiedReached = window.exists { case ((_, u), _) => 1 - u > maxSatisfied }
+
+      def unsatisfieds = window.map { case ((_, u), _) => u }
+      def underMinimumVariation = (unsatisfieds.max - unsatisfieds.min) < minimumVariation
+
       if (tooManySteps || maxUnsatisfiedReached || underMinimumVariation) ResultState(window.last._2, window.last._1._1)
       else lastState(windows.next)
     }

@@ -23,6 +23,8 @@ object Simulation extends App {
     override def similarWanted: Double = 0.4
   }
 
+  simulation.run
+
   val dir = "/tmp/"
 
   val file1 = new File(dir + "resultmicro.csv")
