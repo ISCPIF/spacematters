@@ -62,14 +62,15 @@ val explo = ExplorationTask (
         greenRatio in Range(0.0, 1.0),
         redRatio in Range(0.0, 1.0),
         similarWanted in Range(0.0, 1.0),
-        maxCapacity in Range(0.0,100.0)
-      ).filter("greenRatio + redRatio < 0.98") x (seed in UniformDistribution[Long]() take 50) take 10
+        maxCapacity in Range(1.0,100.0)
+      ).filter("greenRatio + redRatio < 0.98") x (seed in UniformDistribution[Long]() take 50)
     )
     
 val outputCSV = AppendToCSVFileHook("./schelling.csv")
   
 //val env = DIRACEnvironment("biomed", "https://ccdirac06.in2p3.fr:9178", cpuTime = 10 hours, openMOLEMemory = 1500)
 
-val ex = explo -< (model hook outputCSV) start
+val env = DIRACEnvironment("biomed", "https://ccdirac06.in2p3.fr:9178", cpuTime = 4 hours, openMOLEMemory = 1500)
+val ex = explo -< (model on env by 200 hook outputCSV) start
 
 
