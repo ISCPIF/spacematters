@@ -26,8 +26,9 @@ shinyUI(fluidPage(
                    Tab='\t'),
                  ',')
   ),
- 
-   mainPanel(
+  mainPanel(
+    tabsetPanel(
+      tabPanel("Schelling Map",
 
               fluidRow(
                 h3("Model Parameterization"),
@@ -45,11 +46,19 @@ shinyUI(fluidPage(
                                               ), selected = "pctgreens"))
              ),
              plotOutput("map_cell"),
-             h3("Segregation measures"),
-             tableOutput("measurestable"),
-             h3("Measures correlation across steps"),
-             plotOutput("plotindexes")
-   )
+            h3("Segregation measures"),
+            tableOutput("measurestable")),
+      tabPanel("Selection of Indicators",
+             h3("Measures correlation"),
+             plotOutput("plotindexes"),
+             h3("Redundant measures :"),
+             "Entropy (with dissimilarity), IsolationGreen (with ExposureGreenToRed),
+             IsolationRed (with ExposureRedToGreen), DeltaGreenRed (with dissimilarity),
+             ExposureGreenRed (with ExposureRedToGreen and DeltaRedGreen), DeltaRedGreen (with dissimilarity)",
+             h3("Selected measures' correlation :"),
+             plotOutput("plotindexes2")
+             )
+   
     
-
+))
 ))

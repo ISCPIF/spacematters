@@ -102,7 +102,7 @@ rquery.cormat<-function(x,
 shinyServer(function(input, output) {
   resultFile <- reactiveValues(pathmacro= "data/resultmacro.csv", pathmicro= "data/resultmicro.csv")
   resultTable <- reactiveValues(datamacro = NULL, datamicro = NULL)
-  
+ 
   
   output$map_cell <- renderPlot({
     inMicroFile <- input$file1  
@@ -198,17 +198,25 @@ output$measurestable <- renderTable({
  return(currentstep)
 },digits = 3)
 
+resultschelling <-reactive({
+  data <- read.csv("data/schelling_sims.csv", sep=",", dec=".", header=T)
+  return(data)
+})
 
 output$plotindexes <- renderPlot({
-  indexes <- resultTable$datamacro[,2:11]
-  colnames(indexes) <-  c("unsatisfied","dissimilarity", "moranRed","Entropy", "ExposureRed",
-                          "ExposureGreen", "IsolationRed","IsolationGreen",
-                          "ConcentrationRed",  "ConcentrationGreen" )
+  df <- resultschelling()
+  indexes <- df[,c("dissimilarity", "moran","entropy", "unsatisfiedRatio","exposureGreenRed", "exposureRedGreen",
+                   "deltaGreenRed", "deltaRedGreen", "isolationGreenRed", "isolationRedGreen" )]
   p <- rquery.cormat(indexes, type="full")
   return(p)
 })
 
-
+output$plotindexes2 <- renderPlot({
+  df <- resultschelling()
+  indexes <- df[,c("dissimilarity", "moran","unsatisfiedRatio","exposureRedGreen")]
+  p <- rquery.cormat(indexes, type="full")
+  return(p)
+})
 
 })
 
