@@ -218,5 +218,18 @@ output$plotindexes2 <- renderPlot({
   return(p)
 })
 
+
+output$sensitivity1 <- renderPlot({
+  df <- resultschelling()
+  index = input$index
+  segregation <- df[,c("greenRatio", "redRatio","similarWanted", "dissimilarity", "moran","exposureRedGreen")]
+  segregation$ToleranceLevel <- 1 - segregation$similarWanted
+  segregation$VacancyRate <- 1 - segregation$greenRatio - segregation$redRatio
+  segregation$segregationIndex = segregation[,index]
+  plotseg <- ggplot(segregation, aes(x=ToleranceLevel, y=segregationIndex, colour=VacancyRate)) +
+   geom_point()
+  return(plotseg)
+})
+
 })
 

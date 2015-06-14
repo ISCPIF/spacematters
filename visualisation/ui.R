@@ -56,8 +56,21 @@ shinyUI(fluidPage(
              IsolationRed (with ExposureRedToGreen), DeltaGreenRed (with dissimilarity),
              ExposureGreenRed (with ExposureRedToGreen and DeltaRedGreen), DeltaRedGreen (with dissimilarity)",
              h3("Selected measures' correlation :"),
-             plotOutput("plotindexes2")
-             )
+             plotOutput("plotindexes2"),
+             "Correlations are computed over 23550 runs of a schelling model.
+             Parameters are set with a Sobol suite"
+             ),
+      tabPanel("Sensitivity Analysis",
+               h3("Sensitivity of segregation to Tolerance level"),
+               fluidRow(column(6,
+                      selectInput("index", label = "Segregation Index",
+                                  choices = c("Dissimilarity" = "dissimilarity",
+                                              "Moran's I" = "moran",
+                                              "Exposure of Reds to Greens" = "exposureRedGreen"
+                                  ), selected = "dissimilarity"))
+      ),
+               plotOutput("sensitivity1")
+      )
    
     
 ))
