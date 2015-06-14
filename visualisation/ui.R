@@ -47,7 +47,6 @@ shinyUI(fluidPage(
              ),
              plotOutput("map_cell"),
             h3("Segregation measures"),
-<<<<<<< HEAD
             tableOutput("measurestable")),
       tabPanel("Selection of Indicators",
              h3("Measures correlation"),
@@ -65,31 +64,29 @@ shinyUI(fluidPage(
                h3("Sensitivity of segregation to Tolerance level"),
                fluidRow(column(6,
                       selectInput("index", label = "Segregation Index",
-                                  choices = c("Dissimilarity" = "dissimilarity",
-                                              "Moran's I" = "moran",
-                                              "Exposure of Reds to Greens" = "exposureRedGreen"
-                                  ), selected = "dissimilarity"))
+                                  choices = c("Moran's I" = "moran",
+                                              "Dissimilarity" = "dissimilarity",
+                                              "Exposure of Reds to Greens" = "exposureRedGreen",
+                                              "Entropy"="entropy",
+                                              "Isolation of Reds" ="isolationRedGreen",
+                                              "Share of Unsatisfied"="unsatisfiedRatio"
+                                  ), selected = "moran")),
+                      column(6,
+                             selectInput("param", label = "Sensitivity to Parameter",
+                                         choices = c("Tolerance Level" = "ToleranceLevel",
+                                                     "Vacancy Rate" = "VacancyRate"
+                                         ), selected = "ToleranceLevel")),
+                      column(6,
+                             sliderInput("bins", label = "Number of bins for the parameter",
+                                         min = 2, max = 100, value = 10, step = 1))
       ),
-               plotOutput("sensitivity1")
+              
+#                plotOutput("sensitivity1"),
+plotOutput("sensitivity2"),
+tableOutput("test"),
+dataTableOutput("sensitivity")
       )
-=======
-            tableOutput("measurestable"))
-      #For Offline exploration with file "schelling_sims.csv"
-#       tabPanel("Selection of Indicators",
-#              h3("Measures correlation"),
-#              plotOutput("plotindexes"),
-#              h3("Redundant measures :"),
-#              "Entropy (with dissimilarity), IsolationGreen (with ExposureGreenToRed),
-#              IsolationRed (with ExposureRedToGreen), DeltaGreenRed (with dissimilarity),
-#              ExposureGreenRed (with ExposureRedToGreen and DeltaRedGreen), DeltaRedGreen (with dissimilarity)",
-#              h3("Selected measures' correlation :"),
-#              plotOutput("plotindexes2"),
-#              "Correlation of segregation measures based on 23550 simulations with 25x25 grid
-#              and random parameterization from a Sobol suite."
-#       
-#              )
->>>>>>> 78e4a03ebfca846ac8c7a952ccdd15351e0aae5e
-   
+  
     
 ))
 ))
