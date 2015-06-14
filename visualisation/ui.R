@@ -47,6 +47,7 @@ shinyUI(fluidPage(
              ),
              plotOutput("map_cell"),
             h3("Segregation measures"),
+<<<<<<< HEAD
             tableOutput("measurestable")),
       tabPanel("Selection of Indicators",
              h3("Measures correlation"),
@@ -71,6 +72,23 @@ shinyUI(fluidPage(
       ),
                plotOutput("sensitivity1")
       )
+=======
+            tableOutput("measurestable"))
+      #For Offline exploration with file "schelling_sims.csv"
+#       tabPanel("Selection of Indicators",
+#              h3("Measures correlation"),
+#              plotOutput("plotindexes"),
+#              h3("Redundant measures :"),
+#              "Entropy (with dissimilarity), IsolationGreen (with ExposureGreenToRed),
+#              IsolationRed (with ExposureRedToGreen), DeltaGreenRed (with dissimilarity),
+#              ExposureGreenRed (with ExposureRedToGreen and DeltaRedGreen), DeltaRedGreen (with dissimilarity)",
+#              h3("Selected measures' correlation :"),
+#              plotOutput("plotindexes2"),
+#              "Correlation of segregation measures based on 23550 simulations with 25x25 grid
+#              and random parameterization from a Sobol suite."
+#       
+#              )
+>>>>>>> 78e4a03ebfca846ac8c7a952ccdd15351e0aae5e
    
     
 ))
