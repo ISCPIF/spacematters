@@ -14,9 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.iscpif.schelling.quantity.stop
+package fr.iscpif.spacematters.model.stop
 
 import fr.iscpif.schelling.quantity._
+import fr.iscpif.spacematters.model.{Schelling, State}
 
 import scala.util.{ Random, Try }
 

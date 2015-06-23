@@ -14,10 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.iscpif.schelling.quantity
+package fr.iscpif.spacematters.model
 
 import fr.iscpif.schelling.quantity.initial._
 import fr.iscpif.schelling.quantity.move._
+import fr.iscpif.spacematters.model.initial.InitialState
+import fr.iscpif.spacematters.model.move.Moves
 
 import scala.util.Random
 

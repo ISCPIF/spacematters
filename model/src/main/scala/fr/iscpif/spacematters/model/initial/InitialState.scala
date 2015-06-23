@@ -14,14 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.iscpif.schelling.quantity
+package fr.iscpif.spacematters.model.initial
 
-object Cell {
-  val empty = Cell(0, 0, 0)
-}
+import fr.iscpif.schelling.quantity._
+import fr.iscpif.spacematters.model.State
+import scala.util.Random
 
-case class Cell(capacity: Int, green: Int, red: Int) {
-  def isFull = population >= capacity
-  def isEmpty = population <= 0
-  def population = red + green
+trait InitialState {
+  def initialState(implicit rng: Random): State
 }

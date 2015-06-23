@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.iscpif.schelling.quantity
+package fr.iscpif.spacematters.model
 
 import monocle._
 import monocle.macros._

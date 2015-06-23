@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.iscpif.schelling.quantity
+package fr.iscpif.spacematters.model
 
-case class State(matrix: Seq[Seq[Cell]]) {
-  def side = matrix.size
-  def apply(i: Int)(j: Int) =
-    if (i < 0 || j < 0 || i >= side || j >= side) Cell.empty
-    else matrix(i)(j)
+object Cell {
+  val empty = Cell(0, 0, 0)
+}
 
-  def cells = matrix.flatZipWithIndex
+case class Cell(capacity: Int, green: Int, red: Int) {
+  def isFull = population >= capacity
+  def isEmpty = population <= 0
+  def population = red + green
 }

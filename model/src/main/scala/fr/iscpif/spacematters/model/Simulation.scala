@@ -1,4 +1,4 @@
-package fr.iscpif.schelling.quantity
+package fr.iscpif.spacematters.model
 
 import java.io.File
 

@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.iscpif.schelling
+package fr.iscpif.spacematters
 
 import scala.util.Random
 
-package object quantity {
+package object model {
 
   implicit class SeqDecorator[T](s: Seq[T]) {
     def random(implicit rng: Random) = s((s.size * rng.nextDouble).toInt)

@@ -14,9 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.iscpif.schelling.quantity.move
+package fr.iscpif.spacematters.model.move
 
 import fr.iscpif.schelling.quantity._
+import fr.iscpif.spacematters.model.{Position, State, Color}
 
 case class Unsatisfied(position: Position, color: Color, number: Int)
 
