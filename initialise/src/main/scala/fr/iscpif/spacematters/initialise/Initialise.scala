@@ -19,17 +19,20 @@ package fr.iscpif.spacematters.initialise
 import fr.iscpif.mgo._
 import fr.iscpif.mgo.mutation._
 import fr.iscpif.mgo.crossover._
+import fr.iscpif.spacematters.model._
+import metric._
+import Moran._
 import monocle.Lens
 import monocle.macros.GenLens
 
 import scala.util.Random
 
-object Initialise {
+object Initialise extends App {
 
-  val size = 50
+  val size = 20
   val avgCapacity = 100
 
-  case class World(size: Int, matrix: Seq[Seq[Int]], mutation: Option[Int] = None)
+  case class World(size: Int, matrix: Matrix[Int], mutation: Option[Int] = None)
 
   trait PSE <: NoFitness
       with HitMapArchive
@@ -45,7 +48,7 @@ object Initialise {
     type G = World
   }
 
-  def flatWorld(size: Int, capacity: Int) = World(size, Seq.fill(size, size)(capacity))
+  def flatWorld(size: Int, capacity: Int) = World(size, Matrix(Seq.fill(size, size)(capacity)))
 
   def mutateWorld(world: World, sigma: Double, moves: Int)(implicit rng: Random) = {
     val buffer = world.matrix.map(_.toArray)
@@ -59,7 +62,8 @@ object Initialise {
       val toCap = buffer(toI)(toJ)
       val quantity = {
         val q = math.abs((rng.nextGaussian() * sigma).toInt)
-        rng.nextInt(math.min(fromCap, q))
+        val bounded = math.min(fromCap, q)
+        if (bounded == 0) 0 else rng.nextInt(bounded)
       }
 
       buffer(toI)(toJ) = toCap + quantity
@@ -67,7 +71,21 @@ object Initialise {
     }
 
     for (m ← 0 until moves) oneMove
-    world.copy(matrix = buffer.map(_.toSeq))
+    world.copy(matrix = Matrix(buffer.map(_.toSeq)))
+  }
+
+  def evaluateMatrix(matrix: Matrix[Int]): Seq[Double] = {
+    def id = (x: Int) ⇒ x.toDouble
+
+    def trash = Seq.fill(4)(Double.NegativeInfinity)
+
+    val (s, r2) = slope(matrix, id)
+    val dm = distanceMean(matrix, id)
+    val cm = capacityMoran(matrix, id)
+    val e = entropy(matrix, id)
+
+    if (s < -4 || r2 < 0.5 || e < 0.5) trash
+    else Seq(s, cm, dm, e)
   }
 
   val pse = new PSE {
@@ -78,21 +96,35 @@ object Initialise {
     override def mutations: Vector[Mutation] =
       Vector(
         parameterableMutation(2.0, 10),
-        parameterableMutation(4.0, 25),
-        parameterableMutation(8.0, 50),
-        parameterableMutation(16.0, 100)
+        parameterableMutation(5.0, 25),
+        parameterableMutation(10.0, 50),
+        parameterableMutation(20.0, 100)
       )
 
     override def crossovers: Vector[Crossover] = Vector.empty
 
-    override def steps: Int = 1000
-    override def lambda: Int = 1000
+    override def steps: Int = 100
+    override def lambda: Int = 200
 
-    override def express(g: World, rng: Random): Seq[Double] = ???
-    override def gridSize: Seq[Double] = ???
+    override def express(g: World, rng: Random): Seq[Double] = evaluateMatrix(g.matrix)
+    override def gridSize: Seq[Double] = Seq(0.01, 0.01, 0.01, 0.01)
 
     override def randomGenome(implicit rng: Random): World =
-      mutateWorld(flatWorld(size, avgCapacity), avgCapacity, size * size)(rng)
+      mutateWorld(
+        flatWorld(size, avgCapacity),
+        rng.nextDouble() * avgCapacity / 2,
+        rng.nextInt(size * size) / 2)(rng)
+  }
+
+  implicit val rng = new Random(42)
+  val res = pse.evolve.untilConverged {
+    s ⇒
+      println(s.terminationState)
+      for {
+        (w, is) ← s.population.map(i ⇒ i.genome -> i.phenotype)
+      } {
+        println(is)
+      }
   }
 
 }
