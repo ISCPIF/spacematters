@@ -16,6 +16,8 @@
  */
 package fr.iscpif.spacematters.model
 
+import org.apache.commons.math3.stat.regression.SimpleRegression
+import fr.iscpif.spacematters.model._
 import math._
 
 package object metric {
@@ -26,7 +28,7 @@ package object metric {
   def total(color: Color, cells: Seq[Cell]) =
     cells.map(color.cellColor.get).sum
 
-  def dissimilarity(state: State, color1: Color, color2: Color): Double = {
+  def dissimilarity(state: Matrix[Cell], color1: Color, color2: Color): Double = {
     val flatCells = state.matrix.flatten
     val totalPopulation = Seq(color1, color2).map { color => color -> total(color, flatCells) }.toMap
 
@@ -38,7 +40,7 @@ package object metric {
     }.sum * 0.5
   }
 
-  def entropy(state: State, color1: Color, color2: Color): Double = {
+  def entropy(state: Matrix[Cell], color1: Color, color2: Color): Double = {
     val flatCells = state.matrix.flatten
     val totalPopulation = Seq(color1, color2).map { color => color -> total(color, flatCells) }.toMap
     val totalPropColor1 = totalPopulation(color1).toDouble / (totalPopulation(color1).toDouble + totalPopulation(color2).toDouble)
@@ -81,7 +83,7 @@ package object metric {
     }.sum
   }
 
-  def exposureOfColor1ToColor2(state: State, color1: Color, color2: Color): Double = {
+  def exposureOfColor1ToColor2(state: Matrix[Cell], color1: Color, color2: Color): Double = {
     val flatCells = state.matrix.flatten
     val totalPopulation = Seq(color1, color2).map { color => color -> total(color, flatCells) }.toMap
     val totalPopColor1 = totalPopulation(color1).toDouble
@@ -101,7 +103,7 @@ package object metric {
     }.sum
   }
 
-  def isolation(state: State, color1: Color, color2: Color): Double = {
+  def isolation(state: Matrix[Cell], color1: Color, color2: Color): Double = {
     val flatCells = state.matrix.flatten
     val totalPopulation = Seq(color1, color2).map { color => color -> total(color, flatCells) }.toMap
     val totalPopColor1 = totalPopulation(color1).toDouble
@@ -121,7 +123,7 @@ package object metric {
     }.sum
   }
 
-  def delta(state: State, color1: Color, color2: Color): Double = {
+  def delta(state: Matrix[Cell], color1: Color, color2: Color): Double = {
     val flatCells = state.matrix.flatten
     val totalPopulation = Seq(color1, color2).map { color => color -> total(color, flatCells) }.toMap
     val totalPopColor1 = totalPopulation(color1).toDouble
@@ -136,12 +138,12 @@ package object metric {
     }.sum * 0.5
   }
 
-  def moran(state: State, color: Color): Double = {
+  def moran(state: Matrix[Cell], quantity: Quantity[Cell]): Double = {
     def flatCells = state.matrix.flatten
     val totalPopulation = flatCells.map(_.population).sum
-    val globalColorRatio = flatCells.map(color.cellColor.get).sum.toDouble / totalPopulation.toDouble
+    val globalColorRatio = flatCells.map(quantity).sum.toDouble / totalPopulation.toDouble
 
-    def colorRatio(cell: Cell) = color.cellColor.get(cell).toDouble / cell.population
+    def colorRatio(cell: Cell) = quantity(cell).toDouble / cell.population
 
     def pairs =
       for {
@@ -175,7 +177,15 @@ package object metric {
     else (NCells.toDouble / nbAdjacentCells.toDouble) * (numerator.toDouble / denominator.toDouble)
   }
 
-  def adjacentCells(state: State, position: Position, size: Int = 1) =
+  def slope[T](matrix: Matrix[T], quantity: Quantity[T]) = {
+    def distribution = matrix.flatten.map(quantity).sorted(Ordering.Int.reverse).filter(_ > 0)
+    def distributionLog = distribution.zipWithIndex.map { case (q, i) => Array(log(i + 1), log(q)) }.toArray
+    val simpleRegression = new SimpleRegression(true)
+    simpleRegression.addData(distributionLog)
+    simpleRegression.getSlope()
+  }
+
+  def adjacentCells[T: Empty](state: Matrix[T], position: Position, size: Int = 1) =
     for {
       oi <- -size to size
       oj <- -size to size

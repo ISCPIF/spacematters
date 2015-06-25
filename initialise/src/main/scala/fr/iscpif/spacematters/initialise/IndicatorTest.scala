@@ -14,11 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.iscpif.spacematters.model.initial
+package fr.iscpif.spacematters.initialise
 
 import fr.iscpif.spacematters.model._
-import scala.util.Random
+import fr.iscpif.spacematters.model.metric._
 
-trait InitialState {
-  def initialState(implicit rng: Random): State
+object IndicatorTest extends App {
+
+  val matrix = Matrix(Seq.tabulate(4, 1) { (i, j) ⇒ math.exp(4 * math.log(i + 1)).toInt })
+  println(slope(matrix, identity[Int]))
+
 }

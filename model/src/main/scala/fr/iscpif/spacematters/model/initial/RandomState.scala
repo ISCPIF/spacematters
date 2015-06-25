@@ -16,7 +16,6 @@
  */
 package fr.iscpif.spacematters.model.initial
 
-import fr.iscpif.schelling.quantity._
 import fr.iscpif.spacematters.model._
 
 import scala.util.Random
@@ -53,6 +52,6 @@ trait RandomState <: InitialState { self: Schelling =>
       }
 
     fill(reservoir)
-    State(builder)
+    Matrix(builder)
   }
 }

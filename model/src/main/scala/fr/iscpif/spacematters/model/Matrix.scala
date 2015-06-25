@@ -16,10 +16,26 @@
  */
 package fr.iscpif.spacematters.model
 
-case class State(matrix: Seq[Seq[Cell]]) {
+trait Empty[T] {
+  def empty: T
+}
+
+object Empty {
+  implicit val emptyCell =
+    new Empty[Cell] {
+      def empty = Cell.empty
+    }
+
+  implicit val emptyInt =
+    new Empty[Int] {
+      def empty = 0
+    }
+}
+
+case class Matrix[T](matrix: Seq[Seq[T]]) {
   def side = matrix.size
-  def apply(i: Int)(j: Int) =
-    if (i < 0 || j < 0 || i >= side || j >= side) Cell.empty
+  def apply(i: Int)(j: Int)(implicit empty: Empty[T]): T =
+    if (i < 0 || j < 0 || i >= side || j >= side) empty.empty
     else matrix(i)(j)
 
   def cells = matrix.flatZipWithIndex

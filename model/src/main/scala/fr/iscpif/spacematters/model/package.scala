@@ -32,6 +32,11 @@ package object model {
       } yield (i, j) -> e
   }
 
-  type Position = (Int, Int)
+  type State = Matrix[Cell]
 
+  type Position = (Int, Int)
+  type Quantity[T] = T => Int
+
+  implicit def colorToCellQuantity(c: Color): Quantity[Cell] = c.cellColor.get(_)
+  implicit def matrixToSeqOfSeq[T](m: Matrix[T]) = m.matrix
 }

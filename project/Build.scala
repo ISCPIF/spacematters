@@ -18,7 +18,9 @@ object SpaceMattersBuild extends Build {
       organization := "fr.iscpif.spacematters"
     )
 
-  lazy val model = Project("model", file("model"), settings = defaultSettings)
+  lazy val model = Project("model", file("model"), settings = defaultSettings) settings (
+    libraryDependencies += "org.apache.commons" % "commons-math3" % "3.5"
+    )
   lazy val initialise = Project("initialise", file("initialise"), settings = defaultSettings) dependsOn(model) settings (
     libraryDependencies += "fr.iscpif" %% "mgo" % "1.79"
     )

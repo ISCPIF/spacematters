@@ -16,8 +16,7 @@
  */
 package fr.iscpif.spacematters.model.stop
 
-import fr.iscpif.schelling.quantity._
-import fr.iscpif.spacematters.model.{Schelling, State}
+import fr.iscpif.spacematters.model._
 
 import scala.util.{ Random, Try }
 
