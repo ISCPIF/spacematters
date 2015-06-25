@@ -18,10 +18,23 @@ package fr.iscpif.spacematters.initialise
 
 import fr.iscpif.spacematters.model._
 import fr.iscpif.spacematters.model.metric._
+import Moran._
 
 object IndicatorTest extends App {
+  def id = (x: Int) ⇒ x.toDouble
 
-  val matrix = Matrix(Seq.tabulate(4, 1) { (i, j) ⇒ math.exp(4 * math.log(i + 1)).toInt })
-  println(slope(matrix, identity[Int]))
+  def capacityMoran(matrix: Matrix[Int]) =
+    moran(
+      matrix,
+      id,
+      distanceDecayNeighbourhoodPairs[Int](1 / distance(_, _))
+    )
+
+  val flatMatrix = Matrix(Seq.fill(4, 4) { 10 })
+
+  val matrix = Matrix(Seq.tabulate(4, 4) { (i, j) ⇒ math.exp(4 * math.log(i + 1)).toInt })
+  println(slope(matrix, id))
+  println(distanceMean(flatMatrix, id))
+  println(capacityMoran(matrix))
 
 }

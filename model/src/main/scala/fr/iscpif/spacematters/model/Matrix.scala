@@ -33,10 +33,18 @@ object Empty {
 }
 
 case class Matrix[T](matrix: Seq[Seq[T]]) {
+  def numberOfCells = side * side
   def side = matrix.size
+
   def apply(i: Int)(j: Int)(implicit empty: Empty[T]): T =
     if (i < 0 || j < 0 || i >= side || j >= side) empty.empty
     else matrix(i)(j)
 
   def cells = matrix.flatZipWithIndex
+
+  def zipWithPosition: Seq[(T, Position)] =
+    for {
+      (row, i) <- matrix.zipWithIndex
+      (content, j) <- row.zipWithIndex
+    } yield content -> (i, j)
 }
