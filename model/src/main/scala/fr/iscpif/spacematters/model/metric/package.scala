@@ -150,7 +150,9 @@ package object metric {
   def distance(p1: Position, p2: Position): Double = {
     val (i1, j1) = p1
     val (i2, j2) = p2
-    math.hypot(i2 - i1, j2 - j1)
+    val a = i2 - i1
+    val b = j2 - j1
+    math.sqrt(a * a + b * b) ///hypot(i2 - i1, j2 - j1)
   }
 
   def distanceMean[T](matrix: Matrix[T], quantity: Quantity[T]) = {

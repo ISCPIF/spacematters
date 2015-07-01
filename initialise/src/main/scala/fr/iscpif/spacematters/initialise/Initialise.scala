@@ -30,7 +30,7 @@ import scala.util.Random
 object Initialise extends App {
 
   val size = 20
-  val avgCapacity = 100
+  val avgCapacity = 1000
 
   case class World(size: Int, matrix: Matrix[Int], mutation: Option[Int] = None)
 
@@ -50,8 +50,10 @@ object Initialise extends App {
 
   def flatWorld(size: Int, capacity: Int) = World(size, Matrix(Seq.fill(size, size)(capacity)))
 
-  def mutateWorld(world: World, sigma: Double, moves: Int)(implicit rng: Random) = {
-    val buffer = world.matrix.map(_.toArray)
+  def mutateWorld(world: World, sigma: Double, proportion: Double)(implicit rng: Random) = {
+    val buffer = Array.tabulate[Int](world.size, world.size) {
+      (i, j) ⇒ world.matrix(i)(j)
+    }
 
     def draw = rng.nextInt(world.size)
 
@@ -61,16 +63,17 @@ object Initialise extends App {
       val fromCap = buffer(fromI)(fromJ)
       val toCap = buffer(toI)(toJ)
       val quantity = {
-        val q = math.abs((rng.nextGaussian() * sigma).toInt)
-        val bounded = math.min(fromCap, q)
-        if (bounded == 0) 0 else rng.nextInt(bounded)
+        val q = math.abs((rng.nextGaussian() * sigma * fromCap).toInt)
+        math.min(fromCap, q)
       }
 
       buffer(toI)(toJ) = toCap + quantity
       buffer(fromI)(fromJ) = fromCap - quantity
     }
 
-    for (m ← 0 until moves) oneMove
+    val nbMoves = (world.size * world.size) * proportion
+
+    for (m ← 0 until rng.nextInt(nbMoves.toInt + 1)) oneMove
     world.copy(matrix = Matrix(buffer.map(_.toSeq)))
   }
 
@@ -89,22 +92,29 @@ object Initialise extends App {
   }
 
   val pse = new PSE {
-    def parameterableMutation(proportion: Double, cellRatio: Double) =
-      (g: G, p: Population[G, P, F], a: A, rng: Random) ⇒ mutateWorld(g, avgCapacity / proportion, (g.size / cellRatio).toInt)(rng)
+    def parameterableMutation(sigma: Double, cellRatio: Double) =
+      (g: G, p: Population[G, P, F], a: A, rng: Random) ⇒ mutateWorld(g, sigma, cellRatio)(rng)
+
+    /* def randomMutation =
+      (g: G, p: Population[G, P, F], a: A, rng: Random) => mutateWorld(
+        flatWorld(size, avgCapacity),
+        rng.nextDouble() * avgCapacity / 2,
+        rng.nextInt(size * size))(rng)*/
 
     override def fromMutation: Lens[World, Option[Int]] = GenLens[World](_.mutation)
     override def mutations: Vector[Mutation] =
       Vector(
-        parameterableMutation(2.0, 10),
-        parameterableMutation(5.0, 25),
-        parameterableMutation(10.0, 50),
-        parameterableMutation(20.0, 100)
+        //randomMutation,
+        parameterableMutation(0.5, 0.25),
+        parameterableMutation(0.2, 0.10),
+        parameterableMutation(0.1, 0.05),
+        parameterableMutation(0.05, 0.05)
       )
 
     override def crossovers: Vector[Crossover] = Vector.empty
 
-    override def steps: Int = 100
-    override def lambda: Int = 200
+    override def steps: Int = 10000
+    override def lambda: Int = 1000
 
     override def express(g: World, rng: Random): Seq[Double] = evaluateMatrix(g.matrix)
     override def gridSize: Seq[Double] = Seq(0.01, 0.01, 0.01, 0.01)
@@ -112,19 +122,19 @@ object Initialise extends App {
     override def randomGenome(implicit rng: Random): World =
       mutateWorld(
         flatWorld(size, avgCapacity),
-        rng.nextDouble() * avgCapacity / 2,
-        rng.nextInt(size * size) / 2)(rng)
+        0.5,
+        0.5)(rng)
   }
 
   implicit val rng = new Random(42)
   val res = pse.evolve.untilConverged {
     s ⇒
-      println(s.terminationState)
-      for {
-        (w, is) ← s.population.map(i ⇒ i.genome -> i.phenotype)
-      } {
-        println(is)
-      }
+      val intervals =
+        s.population.map(_.phenotype).transpose.map {
+          s ⇒ s.filter(_ != Double.NegativeInfinity).min -> s.max
+        }
+
+      println(s.terminationState + " " + s.population.size + " " + intervals.mkString(","))
   }
 
 }
