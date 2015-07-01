@@ -16,6 +16,8 @@
  */
 package fr.iscpif.spacematters.initialise
 
+import java.io._
+
 import fr.iscpif.mgo._
 import fr.iscpif.mgo.mutation._
 import fr.iscpif.mgo.crossover._
@@ -117,7 +119,7 @@ object Initialise extends App {
     override def lambda: Int = 1000
 
     override def express(g: World, rng: Random): Seq[Double] = evaluateMatrix(g.matrix)
-    override def gridSize: Seq[Double] = Seq(0.01, 0.01, 0.01, 0.01)
+    override def gridSize: Seq[Double] = Seq(0.02, 0.05, 0.05, 0.05)
 
     override def randomGenome(implicit rng: Random): World =
       mutateWorld(
@@ -126,9 +128,29 @@ object Initialise extends App {
         0.5)(rng)
   }
 
+  val result = new File(args(0))
+  result.mkdir()
+
   implicit val rng = new Random(42)
   val res = pse.evolve.untilConverged {
     s ⇒
+      val dir = new File(result, s.generation.toString)
+      dir.mkdirs
+
+      def saveGrid(world: World, p: Seq[Double], name: String) = {
+        val file = new File(dir, name)
+        val fos = new PrintStream(new BufferedOutputStream(new FileOutputStream(file)))
+        try {
+          def str = world.matrix.matrix.map(_.mkString(",")).mkString("\n")
+          fos.println(p.mkString(","))
+          fos.println(str)
+        } finally fos.close
+      }
+
+      s.population.zipWithIndex.foreach {
+        case (indiv, i) ⇒ saveGrid(indiv.genome, indiv.phenotype, i.toString)
+      }
+
       val intervals =
         s.population.map(_.phenotype).transpose.map {
           s ⇒ s.filter(_ != Double.NegativeInfinity).min -> s.max
