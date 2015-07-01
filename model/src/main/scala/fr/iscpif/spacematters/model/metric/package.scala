@@ -171,11 +171,14 @@ package object metric {
   }
 
   def entropy[T](matrix: Matrix[T], quantity: Quantity[T]) = {
-    def totalQuantity = matrix.flatten.map(quantity).sum
+    val totalQuantity = matrix.flatten.map(quantity).sum
+    assert(totalQuantity > 0)
     matrix.flatten.map {
       p =>
-        val quantityRatio = quantity(p).toDouble / totalQuantity
-        quantityRatio * math.log(quantityRatio)
+        val quantityRatio = quantity(p) / totalQuantity
+        val localEntropy = if (quantityRatio == 0.0) 0.0 else quantityRatio * math.log(quantityRatio)
+        assert(!localEntropy.isNaN, s"${quantityRatio} ${math.log(quantityRatio)}")
+        localEntropy
     }.sum * (-1 / math.log(matrix.numberOfCells))
   }
 
