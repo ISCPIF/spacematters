@@ -31,15 +31,17 @@ shinyUI(fluidPage(
       tabPanel("Density Grids",
                
                fluidRow(
-                 h3("Choose Grid"),
+                 h3("Spatial Distribution of Density Grids"),
                  column(6,
                         sliderInput("ngrid", label = "Grid ID",
                                     min = 0, max = 758, value = 0, step = 1, animate=T))
                ),
-               h3("Spatial Distribution"),
                plotOutput("map_density"),
-               h3("Grid Description"),
-               tableOutput("indicesgrid")),
+               tableOutput("indicesgrid"),
+               h3("Explore Density Grids' Features"),
+               dataTableOutput("gridresults"),
+               "Summary :",
+               tableOutput("summarygrids")),
       tabPanel("Schelling Map",
 
               fluidRow(

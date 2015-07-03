@@ -6,17 +6,50 @@ library(reshape2)
 library(grid)
 library(lattice)
 
-
+readgrids = function(x){
+  density = read.delim(x, sep=",", dec=".", header=F)
+  indices = as.data.frame(density[1,1:4])
+  colnames(indices) = c("Rank-size slope","Moran's I","Average distance","Entropy")
+  return(indices)
+}
 shinyServer(function(input, output) {
   values <- reactiveValues(ngrid= 'none')
   
   resultFile <- reactiveValues(pathmacro= "data/resultmacro.csv", pathmicro= "data/resultmicro.csv")
   resultTable <- reactiveValues(datamacro = NULL, datamicro = NULL)
-
+  
+  allGrids <- reactive({
+    allgridfiles = list.files("data/densityGrids",full=TRUE)
+    allgrids = lapply(allgridfiles,  readgrids)
+    gridTable = data.frame()
+    for (i in 1:length(allgridfiles)) gridTable = rbind(gridTable,allgrids[[i]])
+    gridTable = as.matrix(gridTable)
+    gridTable[!is.finite(gridTable)] <- NA
+    gridTable = as.data.frame(gridTable)
+    cut = strsplit(allgridfiles, "[/]")
+    ID = as.numeric(lapply(cut, '[[', 3))
+    gridTable = cbind(ID, gridTable)
+    gridTable <-   gridTable[order(gridTable[,"ID"]),]
+    return(gridTable)
+  })
+  
+  
+  output$gridresults <- renderDataTable({
+    tab = allGrids()
+    tab = round(tab,3)
+    return(tab)
+  },options = list(pageLength = 10), )
+  
+  output$summarygrids <- renderTable({
+    tab = allGrids()
+    summary = summary(tab)[,-1]
+    return(summary)
+  })
+  
+  
   output$indicesgrid <- renderTable({
-    density = read.delim(paste("data/densityGrids/", input$ngrid, sep=""), sep=",", dec=".", header=F)
-    indices = as.data.frame(density[1,1:4])
-    colnames(indices) = c("Rank-size slope","Moran's I","Average distance","Entropy")
+    ngrid =  paste("data/densityGrids/",input$ngrid, sep="")
+    indices = readgrids(ngrid)
     return(indices)
   })
   
