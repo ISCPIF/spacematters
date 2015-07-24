@@ -161,7 +161,7 @@ object Initialise extends App {
           s ⇒
             val fitred = s.filter(_ != Double.NegativeInfinity)
             if(fitred.isEmpty) (0.0, 0.0)
-            else fitred.min -> fitreds.max
+            else fitred.min -> fitred.max
         }
 
       println(s.terminationState + " " + s.population.size + " " + intervals.mkString(","))
