@@ -125,7 +125,7 @@ object Initialise extends App {
     override def lambda: Int = 1000
 
     override def express(g: World, rng: Random): Seq[Double] = evaluateMatrix(g.matrix)
-    override def gridSize: Seq[Double] = Seq(0.02, 0.05, 0.05, 0.05)
+    override def gridSize: Seq[Double] = Seq(0.02, 0.002, 0.02, 0.1)
 
     override def filters: Seq[FILTER] = super.filters ++ Seq(
       (p: Population[G, P, F]) => p.filterNot(_.phenotype == trash): Population[G, P, F]
