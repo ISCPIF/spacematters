@@ -158,7 +158,10 @@ object Initialise extends App {
 
       val intervals =
         s.population.map(_.phenotype).transpose.map {
-          s ⇒ s.filter(_ != Double.NegativeInfinity).min -> s.max
+          s ⇒
+            val fitred = s.filter(_ != Double.NegativeInfinity)
+            if(fitred.isEmpty) (0.0, 0.0)
+            else fitred.min -> fitreds.max
         }
 
       println(s.terminationState + " " + s.population.size + " " + intervals.mkString(","))
