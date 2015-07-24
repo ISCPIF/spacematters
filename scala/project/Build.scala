@@ -11,7 +11,7 @@ import com.github.retronym.SbtOneJar
 object SpaceMattersBuild extends Build {
   def defaultSettings = scalariformSettings ++
     Seq (
-      scalaVersion := "2.11.6",
+      scalaVersion := "2.11.7",
       ScalariformKeys.preferences :=
         ScalariformKeys.preferences.value
           .setPreference(AlignSingleLineCaseStatements, true)
@@ -24,7 +24,7 @@ object SpaceMattersBuild extends Build {
     libraryDependencies += "org.apache.commons" % "commons-math3" % "3.5"
     )
   lazy val initialise = Project("initialise", file("initialise"), settings = defaultSettings) dependsOn(model) settings (
-    libraryDependencies += "fr.iscpif" %% "mgo" % "1.80-SNAPSHOT"
+    libraryDependencies += "fr.iscpif" %% "mgo" % "1.80"
     )
 }
 

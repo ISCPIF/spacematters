@@ -26,8 +26,6 @@ import metric._
 import Moran._
 import monocle.Lens
 import monocle.macros.GenLens
-import org.openmole.core.buildinfo
-import org.openmole.gui.server.core.Utils._
 
 import scala.util.Random
 
