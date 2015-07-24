@@ -79,10 +79,11 @@ object Initialise extends App {
     world.copy(matrix = Matrix(buffer.map(_.toSeq)))
   }
 
+  def trash = Seq.fill(4)(Double.NegativeInfinity)
+
+
   def evaluateMatrix(matrix: Matrix[Int]): Seq[Double] = {
     def id = (x: Int) ⇒ x.toDouble
-
-    def trash = Seq.fill(4)(Double.NegativeInfinity)
 
     val (s, r2) = slope(matrix, id)
     val dm = distanceMean(matrix, id)
@@ -125,6 +126,10 @@ object Initialise extends App {
 
     override def express(g: World, rng: Random): Seq[Double] = evaluateMatrix(g.matrix)
     override def gridSize: Seq[Double] = Seq(0.02, 0.05, 0.05, 0.05)
+
+    override def filters: Seq[FILTER] = super.filters ++ Seq(
+      (p: Population[G, P, F]) => p.filterNot(_.phenotype == trash): Population[G, P, F]
+    )
 
     override def randomGenome(implicit rng: Random): World =
       mutateWorld(
