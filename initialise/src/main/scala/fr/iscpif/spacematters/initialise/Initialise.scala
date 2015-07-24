@@ -26,6 +26,8 @@ import metric._
 import Moran._
 import monocle.Lens
 import monocle.macros.GenLens
+import org.openmole.core.buildinfo
+import org.openmole.gui.server.core.Utils._
 
 import scala.util.Random
 
@@ -89,7 +91,12 @@ object Initialise extends App {
     val cm = capacityMoran(matrix, id)
     val e = entropy(matrix, id)
 
-    if (s < -4 || r2 < 0.5 || e < 0.5) trash
+    def validMoran(v: Double) = v >= 0.0 && v <= 0.25
+    def validDistance(v: Double) = v >= 0.0 && v <= 0.02
+    def validEntropy(v: Double) = v >= 0.7 && v <= 0.95
+    def validSlope(v: Double) = v >= -2 && v <= -1
+
+    if (!validMoran(cm) || !validDistance(dm) || !validEntropy(e) || !validSlope(s) || r2 < 0.5) trash
     else Seq(s, cm, dm, e)
   }
 
