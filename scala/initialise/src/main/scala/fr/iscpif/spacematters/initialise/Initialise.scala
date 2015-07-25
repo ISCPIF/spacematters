@@ -49,7 +49,20 @@ object Initialise extends App {
     with PhenotypeGridNiche
     with RandomMating
 
+  trait Aggregated <: Evolution
+    with DynamicMutation
+    with BinaryTournamentSelection
+    with RandomMating
+    with TournamentOnAggregatedFitness
+    with BestAggregatedElitism
+    with NoArchive
+    with CloneRemoval
+    with GeneticBreeding
+    with MGFitness
+    with MaxAggregation
+
   trait NSGAII <: Evolution
+    with DynamicMutation
     with BinaryTournamentSelection
     with RandomMating
     with TournamentOnRankAndDiversity
@@ -164,9 +177,10 @@ object Initialise extends App {
         0.5,
         0.5)(rng)
 
+    def fromMutation: Lens[World, Option[Int]] = GenLens[World](_.mutation)
   }
 
-  val searchFirst = new NSGAII with WorldEvolution with Problem with ConditionalTermination {
+  val searchFirst = new Aggregated with WorldEvolution with Problem with ConditionalTermination {
 
     override def mu = 500
     override def lambda = 200
@@ -205,15 +219,12 @@ object Initialise extends App {
         }
     }.population.map(_.genome)
 
-
   val pse = new PSE with WorldEvolution {
 
     def express(g: World, rng: Random): Seq[Double] = {
       val eval = evaluateMatrixPSE(g.matrix)
       Seq(eval.slope, eval.moran, eval.distance, eval.entropy)
     }
-
-    override def fromMutation: Lens[World, Option[Int]] = GenLens[World](_.mutation)
 
     override def steps: Int = 10000
     override def lambda: Int = 1000
