@@ -37,18 +37,30 @@ object Initialise extends App {
   case class World(size: Int, matrix: Matrix[Int], mutation: Option[Int] = None)
 
   trait PSE <: NoFitness
-      with HitMapArchive
-      with GeneticBreeding
-      with BinaryTournamentSelection
-      with DynamicMutation
-      with TournamentOnHitCount
-      with HierarchicalRanking
-      with RandomNicheElitism
-      with CounterTermination
-      with ProportionalNumberOfRound
-      with PhenotypeGridNiche {
-    type G = World
-  }
+    with HitMapArchive
+    with GeneticBreeding
+    with BinaryTournamentSelection
+    with DynamicMutation
+    with TournamentOnHitCount
+    with HierarchicalRanking
+    with RandomNicheElitism
+    with CounterTermination
+    with ProportionalNumberOfRound
+    with PhenotypeGridNiche
+    with RandomMating
+
+  trait NSGAII <: Evolution
+    with BinaryTournamentSelection
+    with RandomMating
+    with TournamentOnRankAndDiversity
+    with NonDominatedElitism
+    with FitnessCrowdingDiversity
+    with ParetoRanking
+    with NonStrictDominance
+    with NoArchive
+    with CloneRemoval
+    with GeneticBreeding
+    with MGFitness
 
   def flatWorld(size: Int, capacity: Int) = World(size, Matrix(Seq.fill(size, size)(capacity)))
 
@@ -79,38 +91,65 @@ object Initialise extends App {
     world.copy(matrix = Matrix(buffer.map(_.toSeq)))
   }
 
-  def trash = Seq.fill(4)(Double.NegativeInfinity)
+  case class MatrixEvaluation(slope: Double, r2: Double, distance: Double, moran: Double, entropy: Double)
 
-
-  def evaluateMatrix(matrix: Matrix[Int]): Seq[Double] = {
-    def id = (x: Int) ⇒ x.toDouble
-
-    val (s, r2) = slope(matrix, id)
-    val dm = distanceMean(matrix, id)
-    val cm = capacityMoran(matrix, id)
-    val e = entropy(matrix, id)
-
-    def validMoran(v: Double) = v >= 0.0 && v <= 0.25
-    def validDistance(v: Double) = v >= 0.0 && v <= 0.02
-    def validEntropy(v: Double) = v >= 0.7 && v <= 0.95
-    def validSlope(v: Double) = v >= -2 && v <= -1
-
-    if (!validMoran(cm) || !validDistance(dm) || !validEntropy(e) || !validSlope(s) || r2 < 0.5) trash
-    else Seq(s, cm, dm, e)
+  case class Bound(min: Double, max: Double) {
+    def middle = (max - min) / 2.0
+    def contains(v: Double) = min <= v && max >= v
+    def distance(v: Double) =
+      if (v < min) math.abs(v - min)
+      else if (v > max) math.abs(v - max)
+      else 0.0
   }
 
-  val pse = new PSE {
+  val moranBound = Bound(0.0, 0.025)
+  val distanceBound = Bound(0.0, 0.02)
+  val entropyBound = Bound(0.7, 0.95)
+  val slopeBound = Bound(-2, -1)
+  val r2Bound = Bound(0.5, 1.0)
+
+  def valid(matrixEvaluation: MatrixEvaluation) = {
+    import matrixEvaluation._
+    moranBound.contains(moran) &&
+      distanceBound.contains(distance) &&
+      entropyBound.contains(entropy) &&
+      slopeBound.contains(slope) &&
+      r2Bound.contains(r2)
+  }
+
+  def evaluateMatrix(matrix: Matrix[Int]) = {
+    def id = (x: Int) ⇒ x.toDouble
+    val (s, r2) = slope(matrix, id)
+
+    MatrixEvaluation(
+      slope = s,
+      r2 = r2,
+      distance = distanceMean(matrix, id),
+      moran = capacityMoran(matrix, id),
+      entropy = entropy(matrix, id)
+    )
+  }
+
+  def trash =
+    MatrixEvaluation(
+      Double.NegativeInfinity,
+      Double.NegativeInfinity,
+      Double.NegativeInfinity,
+      Double.NegativeInfinity,
+      Double.NegativeInfinity)
+
+  def evaluateMatrixPSE(matrix: Matrix[Int]) = {
+    val evaluation = evaluateMatrix(matrix)
+    if (!valid(evaluation)) trash
+    else evaluation
+  }
+
+  trait WorldEvolution <: G with P with F with A with Mutation {
+    type G = World
     def parameterableMutation(sigma: Double, cellRatio: Double) =
       (g: G, p: Population[G, P, F], a: A, rng: Random) ⇒ mutateWorld(g, sigma, cellRatio)(rng)
 
-    /* def randomMutation =
-      (g: G, p: Population[G, P, F], a: A, rng: Random) => mutateWorld(
-        flatWorld(size, avgCapacity),
-        rng.nextDouble() * avgCapacity / 2,
-        rng.nextInt(size * size))(rng)*/
-
-    override def fromMutation: Lens[World, Option[Int]] = GenLens[World](_.mutation)
-    override def mutations: Vector[Mutation] =
+    def mutations: Vector[Mutation] =
       Vector(
         //randomMutation,
         parameterableMutation(0.5, 0.25),
@@ -119,30 +158,77 @@ object Initialise extends App {
         parameterableMutation(0.05, 0.05)
       )
 
-    override def crossovers: Vector[Crossover] = Vector.empty
-
-    override def steps: Int = 10000
-    override def lambda: Int = 1000
-
-    override def express(g: World, rng: Random): Seq[Double] = evaluateMatrix(g.matrix)
-    override def gridSize: Seq[Double] = Seq(0.02, 0.002, 0.02, 0.1)
-
-    override def filters: Seq[FILTER] = super.filters ++ Seq(
-      (p: Population[G, P, F]) => p.filterNot(_.phenotype == trash): Population[G, P, F]
-    )
-
-    override def randomGenome(implicit rng: Random): World =
+    def randomGenome(implicit rng: Random): World =
       mutateWorld(
         flatWorld(size, avgCapacity),
         0.5,
         0.5)(rng)
+
+  }
+
+  val searchFirst = new NSGAII with WorldEvolution with Problem with ConditionalTermination {
+
+    override def mu = 500
+    override def lambda = 200
+
+    type P = MatrixEvaluation
+
+    def express(g: World, rng: Random) = evaluateMatrix(g.matrix)
+
+    override def evaluate(phenotype: P, rng: Random): Seq[Double] = {
+      val slopeDiff = slopeBound.distance(phenotype.slope)
+      val moranDiff = moranBound.distance(phenotype.moran)
+      val distanceDiff = distanceBound.distance(phenotype.distance)
+      val entropyDiff = entropyBound.distance(phenotype.entropy)
+      val r2Diff = r2Bound.distance(phenotype.r2)
+      Seq(slopeDiff, moranDiff, distanceDiff, entropyDiff, r2Diff)
+    }
+
+    override def maxSteps: Int = 100000
+    override def terminated(population: Population[World, MatrixEvaluation, Seq[Double]])(implicit rng: Random): Boolean =
+      population.exists {
+        i ⇒ valid(i.phenotype)
+      }
+
+    def crossovers: Vector[Crossover] = Vector()
+  }
+
+  implicit val rng = new Random(42)
+
+  val validGenomes =
+    searchFirst.evolve.untilConverged {
+      p ⇒
+        if (p.population.isEmpty) println(s"${p.generation}: empty pop")
+        else {
+          val mins = p.population.map(_.fitness).transpose.map(_.min)
+          println(p.generation + ": " + mins.mkString(","))
+        }
+    }.population.map(_.genome)
+
+
+  val pse = new PSE with WorldEvolution {
+
+    def express(g: World, rng: Random): Seq[Double] = {
+      val eval = evaluateMatrixPSE(g.matrix)
+      Seq(eval.slope, eval.moran, eval.distance, eval.entropy)
+    }
+
+    override def fromMutation: Lens[World, Option[Int]] = GenLens[World](_.mutation)
+
+    override def steps: Int = 10000
+    override def lambda: Int = 1000
+
+    override def gridSize: Seq[Double] = Seq(0.02, 0.002, 0.02, 0.1)
+
+    def crossovers: Vector[Crossover] = Vector()
   }
 
   val result = new File(args(0))
   result.mkdir()
 
-  implicit val rng = new Random(42)
-  val res = pse.evolve.untilConverged {
+  //searchFirst.evolve().untilConverged { s ⇒ s }
+
+  val res = pse.evolve(validGenomes).untilConverged {
     s ⇒
       val dir = new File(result, s.generation.toString)
       dir.mkdirs
@@ -165,7 +251,7 @@ object Initialise extends App {
         s.population.map(_.phenotype).transpose.map {
           s ⇒
             val fitred = s.filter(_ != Double.NegativeInfinity)
-            if(fitred.isEmpty) (0.0, 0.0)
+            if (fitred.isEmpty) (0.0, 0.0)
             else fitred.min -> fitred.max
         }
 
