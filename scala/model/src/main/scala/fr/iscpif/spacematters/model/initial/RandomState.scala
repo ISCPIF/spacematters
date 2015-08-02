@@ -20,15 +20,10 @@ import fr.iscpif.spacematters.model._
 
 import scala.util.Random
 
-trait RandomState <: InitialState { self: Schelling =>
-
-  def maxCapacity: Int
+trait RandomState <: InitialState with CapacityMatrix { self: Schelling =>
 
   def initialState(implicit rng: Random) = {
-    val cells = Seq.fill(size, size) {
-      val capacity = rng.nextInt(maxCapacity)
-      Cell(capacity = capacity, green = 0, red = 0)
-    }
+    val cells = capacityMatrix
 
     val totalCapacity = cells.flatten.map(_.capacity).sum
     val greens = (totalCapacity * greenRatio).toInt

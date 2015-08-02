@@ -21,7 +21,8 @@ object SpaceMattersBuild extends Build {
     )
 
   lazy val model = Project("model", file("model"), settings = defaultSettings) settings (
-    libraryDependencies += "org.apache.commons" % "commons-math3" % "3.5"
+    libraryDependencies += "org.apache.commons" % "commons-math3" % "3.5",
+    libraryDependencies += "com.nrinaudo" %% "scala-csv" % "0.1.1"
     )
   lazy val initialise = Project("initialise", file("initialise"), settings = defaultSettings) dependsOn(model) settings (
     libraryDependencies += "fr.iscpif" %% "mgo" % "1.81-SNAPSHOT"

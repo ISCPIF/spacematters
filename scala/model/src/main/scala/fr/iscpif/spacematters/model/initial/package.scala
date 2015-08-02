@@ -14,12 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.iscpif.spacematters.model.initial
+package fr.iscpif.spacematters.model
 
-import fr.iscpif.spacematters.model._
-import scala.util.Random
+import java.io.File
 
-trait InitialState {
-  def initialState(implicit rng: Random): State
+import com.nrinaudo._
+
+package object initial {
+
+  /*def readMatrix(f: File, size: Int): Seq[Seq[Int]] = {
+    val capacities = csv.safe(f, ',').drop(1)
+
+  }*/
 
 }

@@ -16,10 +16,15 @@
  */
 package fr.iscpif.spacematters.model.initial
 
-import fr.iscpif.spacematters.model._
+import fr.iscpif.spacematters.model.Schelling
+
 import scala.util.Random
 
-trait InitialState {
-  def initialState(implicit rng: Random): State
+trait RandomCapacityMatrix <: CapacityMatrix { self: Schelling =>
+
+  def maxCapacity: Int
+
+  override def capacityGrid(implicit rng: Random): Seq[Seq[Int]] =
+    Seq.fill(size, size) { rng.nextInt(maxCapacity) }
 
 }

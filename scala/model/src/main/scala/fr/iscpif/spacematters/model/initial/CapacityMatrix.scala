@@ -16,10 +16,13 @@
  */
 package fr.iscpif.spacematters.model.initial
 
-import fr.iscpif.spacematters.model._
+import fr.iscpif.spacematters.model.Cell
+
 import scala.util.Random
 
-trait InitialState {
-  def initialState(implicit rng: Random): State
+trait CapacityMatrix {
+  def capacityGrid(implicit rng: Random): Seq[Seq[Int]]
 
+  def capacityMatrix(implicit rng: Random) =
+    capacityGrid.map(_.map(c => Cell(capacity = c, green = 0, red = 0)))
 }
