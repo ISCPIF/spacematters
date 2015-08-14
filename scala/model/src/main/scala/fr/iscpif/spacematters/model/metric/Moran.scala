@@ -42,8 +42,14 @@ object Moran {
       distanceDecayNeighbourhoodPairs[T](1 / distance(_, _))
     )
 
-  def colorRatioMoran(matrix: Matrix[Cell], color: Color) =
-    moran(matrix, (c: Cell) ⇒ color.cellColor.get(c) / c.population, localNeighbourhoodPairs[Cell])
+  def colorRatioMoran(matrix: Matrix[Cell], color: Color) = {
+    def quantity(c: Cell) = {
+      if (c.population <= 0) 0.0
+      else color.cellColor.get(c).toDouble / c.population
+    }
+
+    moran(matrix, quantity, localNeighbourhoodPairs[Cell])
+  }
 
   def moran[T](state: Matrix[T], quantity: Quantity[T], neighbors: Matrix[T] ⇒ Iterator[(T, T, Double)]): Double = {
     def flatCells = state.matrix.flatten
@@ -61,13 +67,13 @@ object Moran {
     def denominator =
       flatCells.map {
         cell ⇒
-          if (quantity(cell) == 0) 0
+          if (quantity(cell) <= 0) 0
           else math.pow(quantity(cell) - averageQuantity.toDouble, 2)
       }.sum
 
     val totalWeight = neighbors(state).map { case (_, _, weight) ⇒ weight }.sum
 
-    if (denominator.toDouble == 0) 0
+    if (denominator.toDouble <= 0) 0
     else (state.numberOfCells.toDouble / totalWeight.toDouble) * (numerator / denominator)
   }
 }

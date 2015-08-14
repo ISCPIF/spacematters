@@ -16,6 +16,7 @@
  */
 package fr.iscpif.spacematters.model
 
+import fr.iscpif.spacematters.model.metric.Moran._
 import fr.iscpif.spacematters.model.move.Neighborhood
 import org.apache.commons.math3.stat.regression.SimpleRegression
 import fr.iscpif.spacematters.model._
@@ -190,4 +191,25 @@ package object metric {
       if i != oi || j != oj
     } yield state(i + oi)(j + oj)
 
+  case class Analysis(
+    population: Int,
+    unsatisfied: Int,
+    dissimilarity: Double,
+    moran: Double,
+    entropy: Double,
+    exposureRG: Double,
+    isolation: Double,
+    delta: Double)
+
+  def analyse(model: Schelling, state: State) =
+    Analysis(
+      population = state.map { _.map(_.population).sum }.sum,
+      unsatisfied = model.unsatisfieds(state).map(_.number).sum,
+      dissimilarity = dissimilarity(state, Green, Red),
+      moran = colorRatioMoran(state, Red),
+      entropy = segregationEntropy(state, Green, Red),
+      exposureRG = exposureOfColor1ToColor2(state, Red, Green),
+      isolation = isolation(state, Red, Green),
+      delta = delta(state, Green, Red)
+    )
 }
