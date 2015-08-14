@@ -20,11 +20,19 @@ import java.io.File
 
 import com.nrinaudo._
 
+import scala.collection.mutable
+
 package object initial {
 
-  /*def readMatrix(f: File, size: Int): Seq[Seq[Int]] = {
+  def readMatrix(f: File, size: Int): Seq[Seq[Int]] = {
     val capacities = csv.safe(f, ',').drop(1)
+    val matrix = Array.fill[Int](size, size)(0)
 
-  }*/
+    for {
+      Vector(i, j, c) ← capacities
+    } matrix(i.toInt)(j.toInt) = c.toInt
+
+    matrix.map(_.toSeq).toSeq
+  }
 
 }

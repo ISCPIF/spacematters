@@ -20,7 +20,7 @@ import fr.iscpif.spacematters.model.Schelling
 
 import scala.util.Random
 
-trait RandomCapacityMatrix <: CapacityMatrix { self: Schelling =>
+trait RandomCapacityMatrix <: CapacityMatrix { self: Schelling ⇒
 
   def maxCapacity: Int
 

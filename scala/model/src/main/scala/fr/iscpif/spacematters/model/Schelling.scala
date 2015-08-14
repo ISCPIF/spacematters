@@ -35,7 +35,7 @@ trait Schelling <: InitialState with Moves {
     val builder = state.matrix.map(_.toBuffer).toBuffer
 
     for {
-      Move(color, origin, destination) <- rng.shuffle(moves(state))
+      Move(color, origin, destination) ← rng.shuffle(moves(state))
       destinationCell = builder(destination._1)(destination._2)
       if !destinationCell.isFull
       originCell = builder(origin._1)(origin._2)

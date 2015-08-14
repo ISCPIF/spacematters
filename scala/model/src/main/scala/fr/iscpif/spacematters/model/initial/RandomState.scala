@@ -20,7 +20,7 @@ import fr.iscpif.spacematters.model._
 
 import scala.util.Random
 
-trait RandomState <: InitialState with CapacityMatrix { self: Schelling =>
+trait RandomState <: InitialState with CapacityMatrix { self: Schelling ⇒
 
   def initialState(implicit rng: Random) = {
     val cells = capacityMatrix

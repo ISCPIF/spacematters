@@ -21,5 +21,4 @@ import scala.util.Random
 
 trait InitialState {
   def initialState(implicit rng: Random): State
-
 }
