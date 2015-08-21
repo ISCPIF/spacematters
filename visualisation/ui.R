@@ -48,7 +48,8 @@ shinyUI(fluidPage(
              plotOutput("map_cell"),
             h3("Segregation measures"),
             tableOutput("measurestable"))
-      #For Offline exploration with file "schelling_sims.csv"
+# ,
+#      #For Offline exploration with file "schelling_sims.csv"
 #       tabPanel("Selection of Indicators",
 #              h3("Measures correlation"),
 #              plotOutput("plotindexes"),
