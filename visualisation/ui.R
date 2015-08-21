@@ -28,6 +28,20 @@ shinyUI(fluidPage(
   ),
   mainPanel(
     tabsetPanel(
+      tabPanel("Density Grids",
+               
+               fluidRow(
+                 h3("Spatial Distribution of Density Grids"),
+                 column(6,
+                        sliderInput("ngrid", label = "Grid ID",
+                                    min = 0, max = 2033, value = 0, step = 1, animate=T))
+               ),
+               plotOutput("map_density"),
+               tableOutput("indicesgrid"),
+               h3("Explore Density Grids' Features"),
+               dataTableOutput("gridresults"),
+               "Summary :",
+               tableOutput("summarygrids")),
       tabPanel("Schelling Map",
 
               fluidRow(
@@ -48,6 +62,7 @@ shinyUI(fluidPage(
              plotOutput("map_cell"),
             h3("Segregation measures"),
             tableOutput("measurestable"))
+<<<<<<< HEAD
 # ,
 #      #For Offline exploration with file "schelling_sims.csv"
 #       tabPanel("Selection of Indicators",
@@ -64,6 +79,10 @@ shinyUI(fluidPage(
 #       
 #              )
    
+=======
+
+  
+>>>>>>> 41eaee3a418b3c2c00c33686aa0b9fbc40b1024f
     
 ))
 ))
