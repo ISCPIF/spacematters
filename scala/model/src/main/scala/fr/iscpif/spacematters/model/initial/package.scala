@@ -30,7 +30,7 @@ package object initial {
 
     for {
       Vector(i, j, c) ← capacities
-    } matrix(i.toInt)(j.toInt) = c.toInt
+    } matrix(i.toInt)(j.toInt) = c.toDouble.toInt
 
     matrix.map(_.toSeq).toSeq
   }

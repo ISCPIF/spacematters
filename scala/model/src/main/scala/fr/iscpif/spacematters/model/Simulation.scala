@@ -16,17 +16,18 @@ object Simulation extends App {
 
   implicit val rng = new Random
 
-  val simulation = new Schelling with RandomState with RandomMoves with SpeilmanStop with RandomCapacityMatrix {
-    override def size: Int = 50
-    override def greenRatio: Double = 0.5
-    override def redRatio: Double = 0.35
-    override def maxCapacity: Int = 50
-    override def similarWanted: Double = 0.4
+  val simulation = new Schelling with RandomState with RandomMoves with SpeilmanStop {
+    override def size: Int = 20
+    override def greenRatio: Double = 0.05
+    override def redRatio: Double = 0.05
+    override def similarWanted: Double = 0.6
+
+    override def capacityGrid(implicit rng: Random): Seq[Seq[Int]] = initial.readMatrix(new File(args(0)), 20)
   }
 
-  simulation.run
+  println(simulation.run)
 
-  val dir = "/tmp/"
+  /* val dir = "/tmp/"
 
   val file1 = new File(dir + "resultmicro.csv")
   file1.delete()
@@ -52,12 +53,11 @@ object Simulation extends App {
     val size = simulation.size
     val greenRatio = simulation.greenRatio
     val redRatio = simulation.redRatio
-    val maxCapacity = simulation.maxCapacity
     val similarWanted = simulation.similarWanted
 
     output2.append(
-      s"""$step, $unsatisfied,${dissimilarity(state, Green, Red)}, ${colorRatioMoran(state, Red)}, ${segregationEntropy(state, Green, Red)}, ${exposureOfColor1ToColor2(state, Red, Green)},${exposureOfColor1ToColor2(state, Green, Red)}, ${isolation(state, Red, Green)}, ${isolation(state, Green, Red)},${delta(state, Red, Green)},${delta(state, Green, Red)}, $size, $greenRatio,$redRatio, $maxCapacity, $similarWanted\n""".stripMargin)
+      s"""$step, $unsatisfied,${dissimilarity(state, Green, Red)}, ${colorRatioMoran(state, Red)}, ${segregationEntropy(state, Green, Red)}, ${exposureOfColor1ToColor2(state, Red, Green)},${exposureOfColor1ToColor2(state, Green, Red)}, ${isolation(state, Red, Green)}, ${isolation(state, Green, Red)},${delta(state, Red, Green)},${delta(state, Green, Red)}, $size, $greenRatio,$redRatio, $similarWanted\n""".stripMargin)
 
-  }
+  }*/
 
 }
