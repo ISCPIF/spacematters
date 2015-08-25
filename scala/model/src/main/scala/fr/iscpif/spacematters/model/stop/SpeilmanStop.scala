@@ -18,7 +18,7 @@ package fr.iscpif.spacematters.model.stop
 
 import fr.iscpif.spacematters.model._
 
-import scala.util.{ Random, Try }
+import scala.util.Random
 
 trait SpeilmanStop <: Schelling {
 
@@ -27,7 +27,7 @@ trait SpeilmanStop <: Schelling {
   def maxStep = 200
   def maxSatisfied = 0.98
   def satisfiedWindow = 20
-  def minimumVariation = 0.1
+  def minimumVariation = 0.01
 
   def run(implicit rng: Random): ResultState = {
     def average(s: Seq[Double]) = s.sum / s.size
