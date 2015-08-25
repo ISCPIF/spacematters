@@ -17,9 +17,9 @@ object Simulation extends App {
   implicit val rng = new Random
 
   val simulation = new Schelling with RandomState with RandomMoves with SpeilmanStop with RandomCapacityMatrix {
-    override def size: Int = 50
-    override def greenRatio: Double = 0.5
-    override def redRatio: Double = 0.35
+    override def size: Int = 19
+    override def greenRatio: Double = 0.49
+    override def redRatio: Double = 0.49
     override def maxCapacity: Int = 50
     override def similarWanted: Double = 0.4
   }
