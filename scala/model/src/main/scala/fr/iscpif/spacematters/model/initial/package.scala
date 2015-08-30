@@ -35,4 +35,10 @@ package object initial {
     matrix.map(_.toSeq).toSeq
   }
 
+  def normalize(matrix: Seq[Seq[Int]], population: Int) = {
+    val total = matrix.flatten.sum
+    val ratio = population.toDouble / total
+    matrix.map(_.map(v ⇒ (v * ratio).toInt))
+  }
+
 }

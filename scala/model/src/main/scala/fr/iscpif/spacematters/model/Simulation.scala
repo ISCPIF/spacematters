@@ -17,12 +17,12 @@ object Simulation extends App {
   implicit val rng = new Random
 
   val simulation = new Schelling with RandomState with RandomMoves with SpeilmanStop {
-    override def size: Int = 20
     override def greenRatio: Double = 0.05
     override def redRatio: Double = 0.05
     override def similarWanted: Double = 0.6
 
-    override def capacityGrid(implicit rng: Random): Seq[Seq[Int]] = initial.readMatrix(new File(args(0)), 20)
+    override def capacityGrid(implicit rng: Random): Seq[Seq[Int]] =
+      initial.normalize(initial.readMatrix(new File(args(0)), 20), 100000)
   }
 
   println(simulation.run)

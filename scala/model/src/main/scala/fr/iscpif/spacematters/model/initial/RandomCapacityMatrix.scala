@@ -23,6 +23,7 @@ import scala.util.Random
 trait RandomCapacityMatrix <: CapacityMatrix { self: Schelling ⇒
 
   def maxCapacity: Int
+  def size: Int
 
   override def capacityGrid(implicit rng: Random): Seq[Seq[Int]] =
     Seq.fill(size, size) { rng.nextInt(maxCapacity) }

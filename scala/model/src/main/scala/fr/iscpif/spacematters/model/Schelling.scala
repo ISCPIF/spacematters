@@ -25,7 +25,6 @@ import scala.util.Random
 
 trait Schelling <: InitialState with Moves {
 
-  def size: Int
   def greenRatio: Double
   def redRatio: Double
   def neighborhoodSize = 2
